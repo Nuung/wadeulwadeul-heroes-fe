@@ -3,6 +3,7 @@ import { FieldValues, Path, UseFormRegister, FieldErrors, RegisterOptions } from
 import { BaseFormFieldProps, Option, ValidationRules } from './types';
 import { buildValidationRules, cn } from './utils';
 import { useFormField } from './hooks/useFormField';
+import styles from "./FormRadio.module.css";
 
 /**
  * FormRadio Component Props
@@ -81,7 +82,7 @@ export function FormRadio<T extends FieldValues>({
   });
 
   return (
-    <div className={cn('form-radio-wrapper', className)}>
+    <div className={cn('form-radio-wrapper', className, styles.formRadio)}>
       {label && (
         <label className="form-label">
           {label}

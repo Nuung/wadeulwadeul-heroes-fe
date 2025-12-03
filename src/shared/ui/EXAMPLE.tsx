@@ -4,7 +4,6 @@
  *
  * 개선된 Funnel 패턴 (Compound Component + History API)
  */
-
 import { useForm } from 'react-hook-form';
 import { FormInput, FormRadio, FormSelect } from './Form';
 import { useFunnel, FunnelProgressBar } from './Funnel';
@@ -28,7 +27,7 @@ type OnboardingSteps = {
 };
 
 // 2. 메인 컴포넌트
-export function OnboardingExample() {
+export default function OnboardingExample() {
   // ✅ 개선: useFunnel이 [Funnel 컴포넌트, state, history]를 반환
   const [Funnel, state] = useFunnel<OnboardingSteps>(
     ['email', 'password', 'profile'] as const, // as const로 타입 안전성 확보

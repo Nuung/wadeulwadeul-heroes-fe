@@ -3,6 +3,8 @@ import { FieldValues, Path, UseFormRegister, FieldErrors, RegisterOptions } from
 import { BaseFormFieldProps, ValidationRules } from './types';
 import { buildValidationRules, cn } from './utils';
 import { useFormField } from './hooks/useFormField';
+import styles from "./FormInput.module.css";
+
 
 /**
  * FormInput Component Props
@@ -121,7 +123,7 @@ export function FormInput<T extends FieldValues>({
   });
 
   return (
-    <div className={cn('form-input-wrapper', className)}>
+    <div className={cn('form-input-wrapper border-8', className, styles.formInput)}>
       {label && (
         <label htmlFor={name} className="form-label">
           {label}

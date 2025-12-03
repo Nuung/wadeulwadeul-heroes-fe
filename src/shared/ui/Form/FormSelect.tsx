@@ -3,6 +3,7 @@ import { FieldValues, Path, UseFormRegister, FieldErrors, RegisterOptions } from
 import { BaseFormFieldProps, Option, ValidationRules } from './types';
 import { buildValidationRules, cn } from './utils';
 import { useFormField } from './hooks/useFormField';
+import styles from "./FormSelect.module.css";
 
 /**
  * FormSelect Component Props
@@ -81,7 +82,7 @@ export function FormSelect<T extends FieldValues>({
   });
 
   return (
-    <div className={cn('form-select-wrapper', className)}>
+    <div className={cn('form-select-wrapper', className, styles.formSelect)}>
       {label && (
         <label htmlFor={name} className="form-label">
           {label}

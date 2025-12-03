@@ -3,14 +3,16 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode localdev",
     "build": "vite build",
+    "build:prod": "tsc && vite build --mode production",
     "preview": "vite preview"
   },
   "dependencies": {
     "@use-funnel/react-router-dom": "^0.0.15",
     "@vapor-ui/core": "^1.0.0-beta.7",
     "@vapor-ui/icons": "^1.0.0-beta.5",
+    "axios": "^1.13.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.67.0",

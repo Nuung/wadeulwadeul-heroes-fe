@@ -8,10 +8,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@use-funnel/react-router-dom": "^0.0.15",
     "@vapor-ui/core": "^1.0.0-beta.7",
     "@vapor-ui/icons": "^1.0.0-beta.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.67.0",
     "react-router-dom": "^7.0.0"
   },
   "devDependencies": {

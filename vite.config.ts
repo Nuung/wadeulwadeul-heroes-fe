@@ -1,13 +1,14 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 
-export default defineConfig(({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+export const BASE_URL = "/wadeul";
+export const BASE_SERVER_URL = "https://goormthon-5.goorm.training";
 
+export default defineConfig(({ mode }) => {
   // 설정 파일이 올바르게 실행되는지, 어떤 모드인지 확인하기 위한 로그
   console.log(`[vite.config.ts] Vite가 '${mode}' 모드로 실행 중입니다.`);
-  const isProduction = mode === "production-in" || mode === "production-out";
+  const isProduction = mode === "production";
 
   // 빌드 타임스탬프 생성
   const buildTimestamp = Date.now();
@@ -21,12 +22,11 @@ export default defineConfig(({ mode }) => {
       host: "0.0.0.0",
       port: 5173,
       proxy: {
-        [process.env.VITE_BASE_URL!]: {
-          target: process.env.VITE_BASE_SERVER_URL,
+        [BASE_URL!]: {
+          target: BASE_SERVER_URL,
           changeOrigin: true,
           // 프록시 동작을 실시간으로 터미널에 로깅합니다.
-          rewrite: (path: any) =>
-            path.replace(new RegExp(`^${process.env.VITE_BASE_URL}`), ""),
+          rewrite: (path: any) => path.replace(new RegExp(`^${BASE_URL}`), ""),
           configure: (proxy, _options) => {
             if (isProduction) return;
             proxy.on("proxyReq", (proxyReq, req, _res) => {
@@ -103,19 +103,13 @@ export default defineConfig(({ mode }) => {
         "react-router",
         "react-is",
         "prop-types",
-        "@mui/material",
-        "@mui/icons-material",
-        "@emotion/react",
-        "@emotion/styled",
         "date-fns",
         "lodash",
         "axios",
         "react-i18next",
         "i18next",
         "@tanstack/react-query",
-        "@tabler/icons-react",
       ],
-      exclude: ["@mui/material/colors", "@mui/material/styles"],
       esbuildOptions: {
         target: "es2020",
         supported: {

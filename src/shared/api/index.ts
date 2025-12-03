@@ -1,6 +1,6 @@
 import axios from "axios";
-import { env } from "@/shared/config";
 
+export const BASE_URL = "/wadeul";
 export const baseClient = axios.create({
-  baseURL: env.baseUrl,
+  baseURL: BASE_URL,
 });

@@ -5,6 +5,22 @@
 import type { PaginationParams } from "../common.types";
 import type { UserInfoResponse } from "./user.types";
 
+/**
+ * Template data structure for class experience plan
+ */
+export interface ClassTemplateData {
+  "체험 제목": string;
+  "클래스 소개": string;
+  "난이도": string;
+  "로드맵": string;
+  "오프닝": string;
+  "준비 단계": string;
+  "핵심 체험": string;
+  "마무리": string;
+  "준비물": string;
+  "특별 안내사항": string;
+}
+
 export interface ClassCreate {
   category: string;
   location: string;
@@ -14,7 +30,7 @@ export interface ClassCreate {
   job_description: string;
   materials: string;
   price_per_person: string;
-  template?: string | null;
+  template?: ClassTemplateData | null;
 }
 
 export interface ClassInfoResponse {
@@ -26,7 +42,7 @@ export interface ClassInfoResponse {
   job_description: string;
   materials: string;
   price_per_person: string;
-  template: string | null;
+  template: ClassTemplateData | null;
 }
 
 export interface ClassResponse {
@@ -38,7 +54,7 @@ export interface ClassResponse {
   job_description: string;
   materials: string;
   price_per_person: string;
-  template: string | null;
+  template: ClassTemplateData | null;
   id: string;
   creator_id: string;
 }
@@ -52,7 +68,7 @@ export interface ClassUpdate {
   job_description?: string | null;
   materials?: string | null;
   price_per_person?: string | null;
-  template?: string | null;
+  template?: ClassTemplateData | null;
 }
 
 export interface EnrollmentCreate {

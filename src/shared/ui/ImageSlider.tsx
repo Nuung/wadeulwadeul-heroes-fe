@@ -112,7 +112,13 @@ export function ImageSlider({
                           )}
                         </VStack>
                       </div>
-                      <Button size="lg" onClick={(e) => e.stopPropagation()}>
+                      <Button
+                        size="lg"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.location.href = "tel:01012345678";
+                        }}
+                      >
                         전화하기
                       </Button>
                     </div>

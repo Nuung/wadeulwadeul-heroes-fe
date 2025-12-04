@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Form, Field, TextInput, Button, VStack, HStack, Text, Box } from '@vapor-ui/core';
+import { useNavigate } from 'react-router-dom';
+import { Form, Field, TextInput, Button, VStack, HStack, Text, Box, Sheet } from '@vapor-ui/core';
 import { useFunnel } from '../shared/ui/Funnel';
 import { NumberStepper } from '../shared/ui/Number/NumberStepper';
 import { CategoryCard, CategoryOption } from '../shared/ui/CategoryCard';
@@ -76,6 +77,9 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
 ];
 
 export default function ExperienceForm() {
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(true);
+
   const [Funnel, state, history] = useFunnel<ExperienceFormSteps>(
     ['category', 'experience', 'occupation', 'expertise', 'location', 'name', 'duration', 'capacity', 'price'] as const,
     {
@@ -101,12 +105,31 @@ export default function ExperienceForm() {
     alert('체험이 등록되었습니다!');
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      // Sheet가 닫히면 메인 페이지로 이동
+      navigate('/');
+    }
+  };
+
   return (
-    <div className="v-min-h-screen v-bg-canvas-100 v-p-8">
-      <div className="v-max-w-4xl v-mx-auto">
-        <Box backgroundColor="$white" padding="$400" borderRadius="$300" className="v-shadow-lg">
-          <Form onSubmit={handleSubmit}>
-            <Funnel>
+    <Sheet.Root open={isOpen} onOpenChange={handleOpenChange}>
+      <Sheet.Popup
+        positionerElement={<Sheet.PositionerPrimitive side="bottom" />}
+        style={{
+          maxHeight: 'calc(100vh - 110px)',
+          borderTopLeftRadius: '24px',
+          borderTopRightRadius: '24px',
+        }}
+      >
+        <Sheet.Header>
+          <Sheet.Close />
+        </Sheet.Header>
+        <Sheet.Body style={{ overflow: 'auto' }}>
+          <Box backgroundColor="$white" borderRadius="$300">
+            <Form onSubmit={handleSubmit}>
+              <Funnel>
               {/* 1단계: 카테고리 선택 */}
               <Funnel.Step name="category">
                 {({ history }) => (
@@ -366,17 +389,18 @@ export default function ExperienceForm() {
                   </VStack>
                 )}
               </Funnel.Step>
-            </Funnel>
-          </Form>
+              </Funnel>
+            </Form>
 
-          {/* 진행 상황 표시 */}
-          <Box marginTop="$400">
-            <Text typography="body2" foreground="hint-100" className="v-text-center">
-              {state.history.length} / 9 단계
-            </Text>
+            {/* 진행 상황 표시 */}
+            <Box marginTop="$400">
+              <Text typography="body2" foreground="hint-100" className="v-text-center">
+                {state.history.length} / 9 단계
+              </Text>
+            </Box>
           </Box>
-        </Box>
-      </div>
-    </div>
+        </Sheet.Body>
+      </Sheet.Popup>
+    </Sheet.Root>
   );
 }

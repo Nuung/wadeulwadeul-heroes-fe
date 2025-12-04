@@ -5,12 +5,11 @@ import { useFunnel } from '@use-funnel/react-router-dom';
 import { NumberStepper } from '../shared/ui/Number/NumberStepper';
 import { CategoryCard, CategoryOption } from '../shared/ui/CategoryCard';
 
-// 9단계 Funnel 타입 정의
+// 8단계 Funnel 타입 정의
 type ExperienceFormSteps = {
   category: { category?: string };
   experience: { category: string; experienceYears?: number };
   occupation: { category: string; experienceYears: number; occupation?: string };
-  expertise: { category: string; experienceYears: number; occupation: string };
   location: {
     category: string;
     experienceYears: number;
@@ -205,27 +204,9 @@ export default function ExperienceForm() {
                         onClick={() => {
                           const occupation = occupationRef.current?.value || '';
                           setFormData({ ...formData, occupation });
-                          history.push('expertise', { occupation });
+                          history.push('location', { occupation });
                         }}
                       >
-                        다음
-                      </Button>
-                    </HStack>
-                  </VStack>
-                )}
-                expertise={({ history }) => (
-                  <VStack gap="$300">
-                    <Text typography="heading3">전문성을 강조하는 방법</Text>
-                    <Box padding="$300" backgroundColor="$canvas-100" borderRadius="$200">
-                      <Text typography="body1" foreground="hint-100">
-                        이 섹션은 추후 확장 예정입니다.
-                      </Text>
-                    </Box>
-                    <HStack gap="$150">
-                      <Button type="button" variant="outline" onClick={() => history.back()}>
-                        이전
-                      </Button>
-                      <Button type="button" onClick={() => history.push('location', {})}>
                         다음
                       </Button>
                     </HStack>

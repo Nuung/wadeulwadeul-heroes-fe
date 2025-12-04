@@ -150,7 +150,18 @@ export default function ExperienceForm({
   const stepsRef = useRef<HTMLTextAreaElement>(null);
   const addressRef = useRef<HTMLTextAreaElement>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    category: string;
+    experienceYears: number;
+    occupation: string;
+    ingredients: string;
+    steps: string;
+    address: string;
+    duration: number;
+    maxCapacity: number;
+    price: number;
+    template: any;
+  }>({
     category: "",
     experienceYears: 0,
     occupation: "",
@@ -160,7 +171,7 @@ export default function ExperienceForm({
     duration: 60,
     maxCapacity: 1,
     price: 0,
-    template: "",
+    template: null,
   });
 
   // TanStack Query Mutations

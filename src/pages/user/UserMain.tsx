@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CategoryTab } from "./CategoryTab";
 import { NavMenu } from "./NavMenu";
-import { usePublicClassesQuery } from "@/shared/api/queries";
+import { ClassTemplateData, usePublicClassesQuery } from "@/shared/api/queries";
 
 export function UserMain() {
   const location = useLocation();
@@ -43,28 +43,31 @@ export function UserMain() {
             navigation={false}
             hoverFlip
             flipMode="tap"
-            renderBack={(slide) => (
-              <>
-                <h4>{slide.template["체험 제목"]}</h4>
-                <h5>{slide.capacity} 년차</h5>
-                <hr />
-
-                {slide.template && (
+            renderBack={(slide) => {
+              if (slide.template)
+                return (
                   <>
-                    {classDescList.map((desc) => (
-                      <>
-                        <p className="text-sm text-white/90 leading-relaxed">
-                          {desc}
-                        </p>
-                        <p className="text-xs text-white/90 leading-relaxed">
-                          {slide.template[desc]}
-                        </p>
-                      </>
-                    ))}
+                    <h4>{slide.template["체험 제목"]}</h4>
+                    <h5>{slide.capacity} 년차</h5>
+                    <hr />
+
+                    <>
+                      {classDescList.map((desc) => (
+                        <>
+                          <p className="text-sm text-white/90 leading-relaxed">
+                            {desc}
+                          </p>
+                          {slide.template && (
+                            <p className="text-xs text-white/90 leading-relaxed">
+                              {slide.template[desc as keyof ClassTemplateData]}
+                            </p>
+                          )}
+                        </>
+                      ))}
+                    </>
                   </>
-                )}
-              </>
-            )}
+                );
+            }}
           />
         </div>
       )}

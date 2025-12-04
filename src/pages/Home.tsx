@@ -4,6 +4,7 @@ import { Text } from "@vapor-ui/core";
 export default function Home() {
   return (
     <Card.Root className="max-w-md">
+      <h1 className="text-3xl font-bold text-blue-500">Hello Tailwind!</h1>
       <Card.Body backgroundColor="$orange-100">
         <div className="flex flex-col gap-4">
           <Text

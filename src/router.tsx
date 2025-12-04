@@ -1,19 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import Home from "./pages/Home";
-import Form from "./pages/Form";
-import Map from "./pages/Map";
-import ExperienceForm from "./pages/ExperienceForm";
+import Main from "./pages/Main";
+import { UserMain } from "./pages/user/UserMain";
+import { CreatorMain } from "./pages/creator/CreatorMain";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      { index: true, element: <Home /> },
-      { path: "form", element: <Form /> },
-      { path: "map", element: <Map /> },
-      { path: "experience/new", element: <ExperienceForm /> },
+      { index: true, element: <Main /> },
+      { path: "creator", element: <CreatorMain /> },
+      { path: "content", element: <UserMain /> },
     ],
   },
 ]);

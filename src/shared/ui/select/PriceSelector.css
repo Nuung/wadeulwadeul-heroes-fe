@@ -1,0 +1,36 @@
+/* PriceSelector 커스텀 스타일 */
+
+/* Picker 컨테이너 스타일 */
+.price-selector-wrapper {
+  width: 100%;
+  max-height: 300px;
+}
+
+/* 선택된 항목의 하이라이트 영역 배경색 */
+.price-selector-wrapper .picker-highlight {
+  background-color: var(--vapor-color-orange-100);
+  border-radius: 8px;
+}
+
+/* 선택된 항목 텍스트 스타일 */
+.price-selector-wrapper .picker-item {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--vapor-color-text-primary, #1a1a1a);
+  transition: all 0.2s ease;
+}
+
+/* 비선택 항목 (위아래) 투명도 */
+.price-selector-wrapper .picker-column {
+  position: relative;
+}
+
+.price-selector-wrapper .picker-item {
+  opacity: 0.4;
+}
+
+/* 선택된 항목 (가운데) */
+.price-selector-wrapper .picker-item-selected {
+  opacity: 1;
+  font-weight: 600;
+}

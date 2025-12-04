@@ -1,42 +1,43 @@
-import { Box, Button, Flex, VStack } from "@vapor-ui/core";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Picker from "react-mobile-picker";
 
 interface TimeSelectorProps {
-  selectedTime?: string;
-  times?: string[];
+  selectedTime?: number;
+  times?: number[];
+  onChange?: (value: number) => void;
 }
 
 export default function TimeSelector({
-  selectedTime = "60 minutes",
-  times = [
-    "15 minutes",
-    "30 minutes",
-    "45 minutes",
-    "60 minutes",
-    "75 minutes",
-    "90 minutes",
-    "105 minutes",
-    "120 minutes",
-  ],
+  selectedTime = 60,
+  times = [30, 60, 90, 120, 150, 180, 210, 240],
+  onChange,
 }: TimeSelectorProps) {
-  const [selected, setSelected] = useState(selectedTime);
+  const [pickerValue, setPickerValue] = useState({ time: selectedTime });
+
+  useEffect(() => {
+    setPickerValue({ time: selectedTime });
+  }, [selectedTime]);
+
+  const handleChange = (value: { time: number }) => {
+    setPickerValue(value);
+    onChange?.(value.time);
+  };
 
   return (
-    <div className="invisible-scrollbar">
-      <VStack gap="$050" justifyContent="start" width="100%">
-        {times.map((time) => (
-          <Button
-            key={time}
-            colorPalette="primary"
-            variant={selected === time ? "fill" : "ghost"}
-            size="lg"
-            onClick={() => setSelected(time)}
-            className="text-lg"
-          >
-            {time}
-          </Button>
-        ))}
-      </VStack>
+    <div style={{ width: "100%", maxHeight: "300px" }}>
+      <Picker
+        value={pickerValue}
+        onChange={handleChange}
+        wheelMode="natural"
+      >
+        <Picker.Column name="time">
+          {times.map((time) => (
+            <Picker.Item key={time} value={time}>
+              {time}분
+            </Picker.Item>
+          ))}
+        </Picker.Column>
+      </Picker>
     </div>
   );
 }

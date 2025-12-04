@@ -251,3 +251,11 @@
 @import "@vapor-ui/core/tailwind.css";
 @import "tailwindcss/theme.css" layer(tw-theme);
 @import "tailwindcss/utilities.css" layer(tw-utilities);
+@import "@vapor-ui/core/tailwind.css";
+@import "tailwindcss/theme.css" layer(tw-theme);
+@import "tailwindcss/utilities.css" layer(tw-utilities);
+
+/* Custom styles for large input placeholders */
+.large-input-placeholder::placeholder {
+  font-weight: bold;
+}

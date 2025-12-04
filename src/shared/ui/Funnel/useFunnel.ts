@@ -109,7 +109,7 @@ export function useFunnel<TSteps extends Record<string, any>>(
   const { initialStep, initialContext = {} as TSteps[keyof TSteps], cleanupOnBack = true } = options;
 
   const [currentStep, setCurrentStep] = useState<keyof TSteps>(initialStep);
-  const [context, setContext] = useState<TSteps[keyof TSteps]>(initialContext);
+  const [context, setContext] = useState<TSteps[keyof TSteps]>(initialContext as TSteps[keyof TSteps]);
   const [historyStack, setHistoryStack] = useState<ReadonlyArray<keyof TSteps>>([initialStep]);
 
   /**
@@ -162,9 +162,6 @@ export function useFunnel<TSteps extends Record<string, any>>(
    */
   const back = useCallback(() => {
     if (historyStack.length <= 1) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('[Funnel] Cannot go back: already at the first step.');
-      }
       return;
     }
 

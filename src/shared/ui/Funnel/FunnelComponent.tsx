@@ -31,40 +31,41 @@ export function createFunnelComponent<TSteps extends Record<string, any>>(
     const steps = Children.toArray(children);
 
     // currentStep과 일치하는 Step을 찾습니다
-    const currentStepElement = steps.find((step) => {
-      if (!isValidElement(step)) return false;
-      return (step.props as FunnelStepProps<TSteps, keyof TSteps>).name === currentStep;
-    });
+    // const currentStepElement = steps.find((step) => {
+    //   if (!isValidElement(step)) return false;
+    //   return (step.props as FunnelStepProps<TSteps, keyof TSteps>).name === currentStep;
+    // });
 
-    if (!currentStepElement) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(
-          `[Funnel] Step "${String(currentStep)}" not found in Funnel children.\n` +
-            `Make sure you have a <Funnel.Step name="${String(currentStep)}"> component.`
-        );
-      }
+    // if (!currentStepElement) {
+    //   if (process.env.NODE_ENV === 'development') {
+    //     console.error(
+    //       `[Funnel] Step "${String(currentStep)}" not found in Funnel children.\n` +
+    //         `Make sure you have a <Funnel.Step name="${String(currentStep)}"> component.`
+    //     );
+    //   }
 
-      // Fallback UI
-      return (
-        <div className="funnel-error" style={{ padding: '20px', textAlign: 'center' }}>
-          <h2>단계를 찾을 수 없습니다</h2>
-          <p>요청한 단계: {String(currentStep)}</p>
-        </div>
-      );
-    }
+    //   // Fallback UI
+    //   return (
+    //     <div className="funnel-error" style={{ padding: '20px', textAlign: 'center' }}>
+    //       <h2>단계를 찾을 수 없습니다</h2>
+    //       <p>요청한 단계: {String(currentStep)}</p>
+    //     </div>
+    //   );
+    // }
 
-    if (!isValidElement(currentStepElement)) {
-      return null;
-    }
+    // if (!isValidElement(currentStepElement)) {
+    //   return null;
+    // }
 
-    // Step의 children (render function)을 실행
-    const stepProps = currentStepElement.props as FunnelStepProps<TSteps, keyof TSteps>;
-    const renderProps: FunnelStepRenderProps<TSteps, keyof TSteps> = {
-      context,
-      history,
-    };
+    // // Step의 children (render function)을 실행
+    // const stepProps = currentStepElement.props as FunnelStepProps<TSteps, keyof TSteps>;
+    // const renderProps: FunnelStepRenderProps<TSteps, keyof TSteps> = {
+    //   context,
+    //   history,
+    // };
 
-    return <div className="funnel-container">{stepProps.children(renderProps)}</div>;
+        return <div className="funnel-container"></div>;
+    // return <div className="funnel-container">{stepProps.children(renderProps)}</div>;
   }
 
   /**

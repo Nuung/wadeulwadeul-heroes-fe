@@ -24,6 +24,7 @@ export function UserMain() {
 
   const { data, isLoading, isSuccess } = usePublicClassesQuery();
 
+  const classDescList = ["클래스 소개", "난이도", "로드맵"];
   return (
     <>
       <NavMenu />
@@ -44,11 +45,23 @@ export function UserMain() {
             flipMode="tap"
             renderBack={(slide) => (
               <>
-                <h3 className="text-2xl font-bold">{slide.capacity}</h3>
-                {slide.job_description && (
-                  <p className="text-sm text-white/90 leading-relaxed">
-                    {slide.job_description}
-                  </p>
+                <h4>{slide.template["체험 제목"]}</h4>
+                <h5>{slide.capacity} 년차</h5>
+                <hr />
+
+                {slide.template && (
+                  <>
+                    {classDescList.map((desc) => (
+                      <>
+                        <p className="text-sm text-white/90 leading-relaxed">
+                          {desc}
+                        </p>
+                        <p className="text-xs text-white/90 leading-relaxed">
+                          {slide.template[desc]}
+                        </p>
+                      </>
+                    ))}
+                  </>
                 )}
               </>
             )}

@@ -14,7 +14,7 @@ export interface ClassCreate {
   job_description: string;
   materials: string;
   price_per_person: string;
-  template?: string | null;
+  template?: any | null;
 }
 
 export interface ClassInfoResponse {
@@ -26,7 +26,7 @@ export interface ClassInfoResponse {
   job_description: string;
   materials: string;
   price_per_person: string;
-  template: string | null;
+  template: any | null;
 }
 
 export interface ClassResponse {
@@ -38,7 +38,7 @@ export interface ClassResponse {
   job_description: string;
   materials: string;
   price_per_person: string;
-  template: string | null;
+  template: any | null;
   id: string;
   creator_id: string;
 }
@@ -52,7 +52,7 @@ export interface ClassUpdate {
   job_description?: string | null;
   materials?: string | null;
   price_per_person?: string | null;
-  template?: string | null;
+  template?: any | null;
 }
 
 export interface EnrollmentCreate {

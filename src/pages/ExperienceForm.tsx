@@ -142,7 +142,18 @@ export default function ExperienceForm() {
   const stepsRef = useRef<HTMLTextAreaElement>(null);
   const addressRef = useRef<HTMLTextAreaElement>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    category: string;
+    experienceYears: number;
+    occupation: string;
+    ingredients: string;
+    steps: string;
+    address: string;
+    duration: number;
+    maxCapacity: number;
+    price: number;
+    template: any;
+  }>({
     category: "",
     experienceYears: 0,
     occupation: "",
@@ -152,7 +163,7 @@ export default function ExperienceForm() {
     duration: 60,
     maxCapacity: 1,
     price: 0,
-    template: "",
+    template: null,
   });
 
   // TanStack Query Mutations
@@ -874,7 +885,7 @@ export default function ExperienceForm() {
 
                               setFormData((prev) => ({
                                 ...prev,
-                                template: response.template,
+                                template: response,
                               }));
                               history.push("recommendation", {
                                 price: formData.price,
@@ -916,8 +927,9 @@ export default function ExperienceForm() {
                           borderRadius="$300"
                         >
                           <Text typography="body1" style={{ whiteSpace: "pre-wrap" }}>
-                            {formData.template ||
-                              "입력하신 정보를 바탕으로 체험이 준비되었습니다!"}
+                            {formData.template
+                              ? JSON.stringify(formData.template, null, 2)
+                              : "입력하신 정보를 바탕으로 체험이 준비되었습니다!"}
                           </Text>
                         </Box>
                       </VStack>

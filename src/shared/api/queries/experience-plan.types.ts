@@ -2,6 +2,8 @@
  * Experience Plan Domain Types
  */
 
+import type { ClassTemplateData } from "./class.types";
+
 export interface ExperienceRequest {
   category: string;
   years_of_experience: string;
@@ -13,9 +15,7 @@ export interface ExperienceRequest {
   price_per_person: string;
 }
 
-export interface ExperienceResponse {
-  template: string;
-}
+export type ExperienceResponse = ClassTemplateData;
 
 export interface MaterialsSuggestionRequest {
   category: string;

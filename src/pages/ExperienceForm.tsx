@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Field, TextInput, Button, VStack, HStack, Text, Box, Sheet } from '@vapor-ui/core';
-import { useFunnel } from '../shared/ui/Funnel';
+import { useFunnel } from '@use-funnel/react-router-dom';
 import { NumberStepper } from '../shared/ui/Number/NumberStepper';
 import { CategoryCard, CategoryOption } from '../shared/ui/CategoryCard';
 
@@ -80,14 +80,13 @@ export default function ExperienceForm() {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
 
-  const [Funnel, state, history] = useFunnel<ExperienceFormSteps>(
-    ['category', 'experience', 'occupation', 'expertise', 'location', 'name', 'duration', 'capacity', 'price'] as const,
-    {
-      id: 'experience-form',
-      initialStep: 'category',
-      initialContext: {},
-    }
-  );
+  const funnel = useFunnel<ExperienceFormSteps>({
+    id: 'experience-form',
+    initial: {
+      step: 'category',
+      context: {},
+    },
+  });
 
   const [formData, setFormData] = useState({
     category: '',
@@ -135,10 +134,8 @@ export default function ExperienceForm() {
         <Sheet.Body style={{ overflow: 'auto' }}>
           <Box backgroundColor="$white" borderRadius="$300">
             <Form onSubmit={handleSubmit}>
-              <Funnel>
-              {/* 1단계: 카테고리 선택 */}
-              <Funnel.Step name="category">
-                {({ history }) => (
+              <funnel.Render
+                category={({ history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">어떤 종류의 체험을 제공하시나요?</Text>
                     <Field.Root name="category">
@@ -158,11 +155,7 @@ export default function ExperienceForm() {
                     </Button>
                   </VStack>
                 )}
-              </Funnel.Step>
-
-              {/* 2단계: 경력 입력 */}
-              <Funnel.Step name="experience">
-                {({ context, history }) => (
+                experience={({ context, history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">
                       {CATEGORY_OPTIONS.find((opt) => opt.value === context.category)?.label} 분야에서 몇 년 동안
@@ -192,11 +185,7 @@ export default function ExperienceForm() {
                     </HStack>
                   </VStack>
                 )}
-              </Funnel.Step>
-
-              {/* 3단계: 직업 입력 */}
-              <Funnel.Step name="occupation">
-                {({ history }) => (
+                occupation={({ history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">어떤 일을 하시나요?</Text>
                     <Field.Root name="occupation">
@@ -221,11 +210,7 @@ export default function ExperienceForm() {
                     </HStack>
                   </VStack>
                 )}
-              </Funnel.Step>
-
-              {/* 4단계: 전문성 강조 (추후 확장) */}
-              <Funnel.Step name="expertise">
-                {({ history }) => (
+                expertise={({ history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">전문성을 강조하는 방법</Text>
                     <Box padding="$300" backgroundColor="$canvas-100" borderRadius="$200">
@@ -243,11 +228,7 @@ export default function ExperienceForm() {
                     </HStack>
                   </VStack>
                 )}
-              </Funnel.Step>
-
-              {/* 5단계: 장소 입력 */}
-              <Funnel.Step name="location">
-                {({ history }) => (
+                location={({ history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">신청자와 만나는 장소가 어디인가요?</Text>
                     <Field.Root name="location">
@@ -272,11 +253,7 @@ export default function ExperienceForm() {
                     </HStack>
                   </VStack>
                 )}
-              </Funnel.Step>
-
-              {/* 6단계: 체험 이름 */}
-              <Funnel.Step name="name">
-                {({ history }) => (
+                name={({ history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">체험 이름 작성하기</Text>
                     <Field.Root name="experienceName">
@@ -301,11 +278,7 @@ export default function ExperienceForm() {
                     </HStack>
                   </VStack>
                 )}
-              </Funnel.Step>
-
-              {/* 7단계: 소요 시간 */}
-              <Funnel.Step name="duration">
-                {({ history }) => (
+                duration={({ history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">소요 시간 설정</Text>
                     <Field.Root name="duration">
@@ -334,11 +307,7 @@ export default function ExperienceForm() {
                     </HStack>
                   </VStack>
                 )}
-              </Funnel.Step>
-
-              {/* 8단계: 최대 인원 */}
-              <Funnel.Step name="capacity">
-                {({ history }) => (
+                capacity={({ history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">최대 인원 추가</Text>
                     <Field.Root name="maxCapacity">
@@ -364,11 +333,7 @@ export default function ExperienceForm() {
                     </HStack>
                   </VStack>
                 )}
-              </Funnel.Step>
-
-              {/* 9단계: 요금 설정 */}
-              <Funnel.Step name="price">
-                {({ history }) => (
+                price={({ history }) => (
                   <VStack gap="$300">
                     <Text typography="heading1">게스트 1인당 요금</Text>
                     <Field.Root name="price">
@@ -394,14 +359,13 @@ export default function ExperienceForm() {
                     </HStack>
                   </VStack>
                 )}
-              </Funnel.Step>
-              </Funnel>
+              />
             </Form>
 
             {/* 진행 상황 표시 */}
             <Box marginTop="$400">
               <Text typography="body2" foreground="hint-100" className="v-text-center">
-                현재 단계: {String(state.currentStep)}
+                현재 단계: {String(funnel.step)}
               </Text>
             </Box>
           </Box>

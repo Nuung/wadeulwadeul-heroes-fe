@@ -539,16 +539,8 @@ export default function ExperienceForm({
 
                           <FakeTextarea
                             ref={occupationRef}
-                            placeholder={
-                              CATEGORY_OPTIONS.find(
-                                (opt) => opt.value === formData.category
-                              )?.label + " 전문가"
-                            }
-                            defaultValue={
-                              CATEGORY_OPTIONS.find(
-                                (opt) => opt.value === formData.category
-                              )?.label + " 전문가"
-                            }
+                            placeholder={occupationPlaceholder}
+                            defaultValue={occupationPlaceholder}
                             className="large-input-placeholder"
                             size="xl"
                             autoResize
@@ -1148,7 +1140,9 @@ export default function ExperienceForm({
                                           formData.duration
                                         ),
                                         capacity: String(formData.maxCapacity),
-                                        price_per_person: String(formData.price),
+                                        price_per_person: String(
+                                          formData.price
+                                        ),
                                       }
                                     );
 
@@ -1196,7 +1190,9 @@ export default function ExperienceForm({
                         padding: "24px",
                       }}
                     >
-                      {generateExperiencePlanMutation.isPending || createClassMutation.isPending || !formData.template ? (
+                      {generateExperiencePlanMutation.isPending ||
+                      createClassMutation.isPending ||
+                      !formData.template ? (
                         <VStack gap="$300">
                           <Skeleton variant="text" width="50%" height={36} />
                           <Box

@@ -77,23 +77,28 @@ type ExperienceFormSteps = {
 const CATEGORY_OPTIONS: CategoryOption[] = [
   {
     value: 'art',
-    label: '예술 및 디자인',
+    label: '예술 & 디자인',
+    icon: <span style={{ fontSize: '48px' }}>🎨</span>,
   },
   {
     value: 'cooking',
-    label: '요리',
+    label: '식음료',
+    icon: <span style={{ fontSize: '48px' }}>🍽️</span>,
   },
   {
     value: 'sports',
-    label: '스포츠',
+    label: '피트니스 & 웰니스',
+    icon: <span style={{ fontSize: '48px' }}>💪</span>,
   },
   {
     value: 'nature',
-    label: '자연 및 탐험',
+    label: '자연 및 야외활동',
+    icon: <span style={{ fontSize: '48px' }}>🏞️</span>,
   },
   {
     value: 'culture',
-    label: '문화 및 역사',
+    label: '역사 및 문화',
+    icon: <span style={{ fontSize: '48px' }}>🏛️</span>,
   },
 ];
 
@@ -160,23 +165,31 @@ export default function ExperienceForm() {
             <Form onSubmit={handleSubmit}>
               <funnel.Render
                 category={({ history }) => (
-                  <VStack gap="$300">
-                    <Text typography="heading3">어떤 종류의 체험을 제공하시나요?</Text>
-                    <Field.Root name="category">
-                      <CategoryCard
-                        name="category"
-                        options={CATEGORY_OPTIONS}
-                        value={formData.category}
-                        onChange={(value) => setFormData({ ...formData, category: value })}
-                      />
-                    </Field.Root>
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    minHeight: 'calc(100vh - 200px)',
+                    justifyContent: 'space-between'
+                  }}>
+                    <VStack gap="$300">
+                      <Text typography="heading3">어떤 종류의 체험을 제공하시나요?</Text>
+                      <Field.Root name="category">
+                        <CategoryCard
+                          name="category"
+                          options={CATEGORY_OPTIONS}
+                          value={formData.category}
+                          onChange={(value) => setFormData({ ...formData, category: value })}
+                        />
+                      </Field.Root>
+                    </VStack>
                     <Button
                       type="button"
                       onClick={() => history.push('experience', { category: formData.category })}
+                      style={{ marginTop: '$400' }}
                     >
                       다음
                     </Button>
-                  </VStack>
+                  </div>
                 )}
                 experience={({ context, history }) => (
                   <VStack gap="$300">

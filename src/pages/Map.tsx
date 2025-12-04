@@ -3,7 +3,7 @@ import { Map } from "@/shared/ui/Map";
 const MapPage = (
   ) => {
   return (
-   <Map />
+  <Map />
   );
 };
 

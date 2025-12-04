@@ -1,5 +1,5 @@
-import { RadioCard, RadioGroup, VStack, Text, Grid } from '@vapor-ui/core';
-import { ReactNode } from 'react';
+import { RadioCard, RadioGroup, VStack, Text, Grid } from "@vapor-ui/core";
+import { ReactNode } from "react";
 
 export interface CategoryOption {
   value: string;
@@ -15,29 +15,34 @@ interface CategoryCardProps {
   name: string;
 }
 
-export function CategoryCard({ options, value, onChange, name }: CategoryCardProps) {
+export function CategoryCard({
+  options,
+  value,
+  onChange,
+  name,
+}: CategoryCardProps) {
   return (
     <RadioGroup.Root
       name={name}
       value={value}
       onValueChange={(val) => {
-        if (typeof val === 'string') {
+        if (typeof val === "string") {
           onChange?.(val);
         }
       }}
     >
-      <Grid.Root templateColumns="repeat(2, 1fr)" gap="$400">
+      <Grid.Root templateColumns="repeat(2, 1fr)" gap="$150">
         {options.map((option) => (
           <RadioCard
             key={option.value}
             value={option.value}
             size="lg"
             style={{
-              minHeight: '160px',
-              height: '160px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              minHeight: "160px",
+              height: "160px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <VStack gap="$200" alignItems="center" padding="$300">

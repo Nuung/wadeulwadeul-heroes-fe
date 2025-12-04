@@ -1,4 +1,9 @@
+import MobileBottomNav from "@/shared/ui/BottomNav";
 import { ImageSlider } from "../../shared/ui/ImageSlider";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { CategoryTab } from "./CategoryTab";
+import { NavMenu } from "./NavMenu";
 
 const SAMPLE_SLIDES = [
   {
@@ -24,15 +29,11 @@ const SAMPLE_SLIDES = [
   },
 ];
 
-import MobileBottomNav from "@/shared/ui/BottomNav";
-import { Box, Tabs } from "@vapor-ui/core";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { CategoryTab } from "./CategoryTab";
-import { NavMenu } from "./NavMenu";
-
 export function UserMain() {
-  const [currPath, setCurrPath] = useState("user");
+  const location = useLocation();
+  const [currPath, setCurrPath] = useState(
+    location.pathname.substring(1) || "user",
+  );
   const navigation = useNavigate();
   const onChange = (value: string) => {
     setCurrPath(value);
@@ -40,16 +41,9 @@ export function UserMain() {
   };
 
   useEffect(() => {
-    const handlePopState = () => {
-      const path = window.location.pathname.substring(1);
-      setCurrPath(path || "user");
-    };
-
-    window.addEventListener("popstate", handlePopState);
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, []);
+    const path = location.pathname.substring(1);
+    setCurrPath(path || "user");
+  }, [location.pathname]);
 
   return (
     <>

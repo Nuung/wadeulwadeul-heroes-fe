@@ -1,35 +1,33 @@
-# Funnel 컴포넌트
+# Funnel 패턴 with @use-funnel
 
-다단계 폼(Funnel)을 타입 안전하게 구현하기 위한 컴포넌트와 훅입니다.
+이 프로젝트는 **Toss의 `@use-funnel/react-router-dom` 라이브러리**를 사용하여 다단계 폼(Funnel)을 구현합니다.
 
-## 개요
+## 설치된 라이브러리
 
-Funnel 패턴은 사용자를 여러 단계를 거쳐 하나의 목표로 안내하는 UI 패턴입니다. 주로 회원가입, 온보딩, 설문조사 등에서 사용됩니다.
-
-이 라이브러리는 각 단계별로 필요한 데이터를 타입 안전하게 관리하며, 단계 간 전환과 상태 관리를 쉽게 할 수 있도록 도와줍니다.
-
-## 설치된 패키지
-
-```bash
-pnpm add @use-funnel/react-router-dom
+```json
+{
+  "@use-funnel/react-router-dom": "^0.0.15"
+}
 ```
 
-## 주요 기능
+## 왜 @use-funnel을 사용하나요?
 
-- ✅ TypeScript 타입 안전성
-- ✅ 단계별 context 관리
-- ✅ 히스토리 관리 (뒤로 가기 지원)
-- ✅ 진행 상황 표시 (ProgressBar)
-- ✅ React Hook Form과 완벽한 통합
+- ✅ **타입 안전성**: 각 단계별 context 타입을 엄격하게 관리
+- ✅ **브라우저 히스토리 통합**: 뒤로가기/앞으로가기 자동 지원
+- ✅ **React Router DOM 완벽 연동**: URL 기반 상태 관리
+- ✅ **간결한 API**: `funnel.Render` 컴포넌트로 선언적 작성
+- ✅ **Toss 검증됨**: 토스 프로덕션 환경에서 사용 중
+
+---
 
 ## 기본 사용법
 
-### 1. 단계별 타입 정의
+### 1단계: 단계별 타입 정의
 
-먼저 각 단계에서 필요한 데이터 구조를 정의합니다:
+각 단계에서 필요한 데이터 구조를 TypeScript 타입으로 정의합니다.
 
-```tsx
-type OnboardingSteps = {
+```typescript
+type SignupSteps = {
   email: {
     email?: string;
   };
@@ -37,235 +35,285 @@ type OnboardingSteps = {
     email: string;
     password?: string;
   };
-  profile: {
+  complete: {
     email: string;
     password: string;
-    nickname?: string;
-    region?: string;
   };
 };
 ```
 
-각 단계마다 필수 필드가 달라지는 것을 주목하세요. 이를 통해 타입 안전성을 보장합니다.
+**중요**: 이전 단계의 필수 데이터는 다음 단계에서 필수 타입으로 정의하세요.
 
-### 2. useFunnel 훅 사용
+---
 
-```tsx
+### 2단계: useFunnel 훅 초기화
+
+```typescript
+import { useFunnel } from '@use-funnel/react-router-dom';
+// 또는
 import { useFunnel } from '@/shared/ui/Funnel';
 
-function OnboardingPage() {
-  const funnel = useFunnel<OnboardingSteps>('email', {});
+export default function SignupPage() {
+  const funnel = useFunnel<SignupSteps>({
+    id: 'signup-flow',
+    initial: {
+      step: 'email',
+      context: {},
+    },
+  });
 
-  return (
-    <div>
-      <h1>회원가입</h1>
-      {/* Funnel 컴포넌트 사용 */}
-    </div>
-  );
+  // funnel 객체에는 다음이 포함됩니다:
+  // - funnel.step: 현재 단계 (string)
+  // - funnel.context: 현재 단계의 데이터 (타입 안전)
+  // - funnel.history: 단계 전환 메서드 (push, replace, back)
+  // - funnel.Render: 단계별 UI 렌더링 컴포넌트
 }
 ```
 
-### 3. Funnel 컴포넌트로 단계 렌더링
+---
+
+### 3단계: funnel.Render로 단계별 UI 구성
 
 ```tsx
-import { Funnel } from '@/shared/ui/Funnel';
-import { useForm } from 'react-hook-form';
-import { FormInput } from '@/shared/ui/Form';
+return (
+  <funnel.Render
+    email={({ history }) => (
+      <EmailForm
+        onNext={(email) => history.push('password', { email })}
+      />
+    )}
+    password={({ context, history }) => (
+      <PasswordForm
+        email={context.email} // 타입 안전: string (필수)
+        onNext={(password) => history.push('complete', { password })}
+        onBack={() => history.back()}
+      />
+    )}
+    complete={({ context }) => (
+      <CompletePage
+        email={context.email}
+        password={context.password}
+      />
+    )}
+  />
+);
+```
 
-function OnboardingPage() {
-  const funnel = useFunnel<OnboardingSteps>('email', {});
+---
+
+## 핵심 API
+
+### useFunnel 반환값
+
+```typescript
+const funnel = useFunnel<StepsType>({ id, initial });
+
+// funnel 객체 구조
+{
+  step: string;           // 현재 단계
+  context: any;           // 현재 context (타입 안전)
+  history: {
+    push(step, data),     // 다음 단계로 이동 + 데이터 전달
+    replace(data),        // 현재 단계 context 업데이트 (이동 X)
+    back(),               // 이전 단계로 이동 (브라우저 뒤로가기)
+  },
+  Render: Component,      // 단계별 렌더링 컴포넌트
+}
+```
+
+### funnel.Render Props
+
+각 단계 prop은 **함수**이며, 다음 인자를 받습니다:
+
+```typescript
+stepName={({ context, history }) => {
+  // context: 현재 단계의 타입 안전한 데이터
+  // history: 단계 전환 메서드
+  return <YourComponent />;
+}}
+```
+
+---
+
+## 실전 예제 (ExperienceForm)
+
+프로젝트의 `src/pages/ExperienceForm.tsx`를 참고하세요.
+
+```tsx
+type ExperienceFormSteps = {
+  category: { category?: string };
+  experience: { category: string; experienceYears?: number };
+  occupation: { category: string; experienceYears: number; occupation?: string };
+  // ... 더 많은 단계
+};
+
+export default function ExperienceForm() {
+  const funnel = useFunnel<ExperienceFormSteps>({
+    id: 'experience-form',
+    initial: { step: 'category', context: {} },
+  });
 
   return (
-    <Funnel
-      currentStep={funnel.currentStep}
-      context={funnel.context}
-      onNext={funnel.setStep}
-      onPrev={funnel.canGoBack ? funnel.goBack : undefined}
-      steps={{
-        email: ({ onNext }) => {
-          const { register, handleSubmit, formState: { errors } } = useForm();
-
-          return (
-            <form onSubmit={handleSubmit((data) => onNext('password', data))}>
-              <h2>이메일 입력</h2>
-              <FormInput
-                name="email"
-                label="이메일"
-                type="email"
-                register={register}
-                errors={errors}
-                required
-              />
-              <button type="submit">다음</button>
-            </form>
-          );
-        },
-
-        password: ({ context, onNext, onPrev }) => {
-          const { register, handleSubmit, formState: { errors } } = useForm();
-
-          return (
-            <form onSubmit={handleSubmit((data) => onNext('profile', data))}>
-              <h2>비밀번호 입력</h2>
-              <p>이메일: {context.email}</p>
-              <FormInput
-                name="password"
-                label="비밀번호"
-                type="password"
-                register={register}
-                errors={errors}
-                required
-                minLength={{ value: 8, message: '최소 8자 이상' }}
-              />
-              <button type="button" onClick={onPrev}>이전</button>
-              <button type="submit">다음</button>
-            </form>
-          );
-        },
-
-        profile: ({ context, onNext }) => {
-          const { register, handleSubmit, formState: { errors } } = useForm();
-
-          return (
-            <form onSubmit={handleSubmit((data) => {
-              console.log('최종 데이터:', { ...context, ...data });
-              // 회원가입 API 호출 등
-            })}>
-              <h2>프로필 입력</h2>
-              <FormInput
-                name="nickname"
-                label="닉네임"
-                register={register}
-                errors={errors}
-                required
-              />
-              <button type="submit">완료</button>
-            </form>
-          );
-        },
-      }}
+    <funnel.Render
+      category={({ history }) => (
+        <VStack>
+          <Text>어떤 종류의 체험을 제공하시나요?</Text>
+          <CategoryCard onChange={(value) => history.push('experience', { category: value })} />
+        </VStack>
+      )}
+      experience={({ context, history }) => (
+        <VStack>
+          <Text>{context.category} 분야에서 몇 년 일하셨나요?</Text>
+          <NumberInput onChange={(years) => history.push('occupation', { experienceYears: years })} />
+          <Button onClick={() => history.back()}>이전</Button>
+        </VStack>
+      )}
+      {/* ... 더 많은 단계 */}
     />
   );
 }
 ```
 
-## 진행 상황 표시
+---
 
-`FunnelProgressBar` 컴포넌트를 사용하여 사용자에게 진행 상황을 보여줄 수 있습니다:
+## 고급 기능
+
+### 1. 조건부 단계 전환
+
+```typescript
+category={({ history }) => {
+  const handleNext = (category: string) => {
+    if (category === 'premium') {
+      history.push('payment', { category });
+    } else {
+      history.push('basic', { category });
+    }
+  };
+
+  return <CategorySelector onSelect={handleNext} />;
+}}
+```
+
+### 2. 이벤트 기반 전환 (funnel.Render.with)
+
+복잡한 이벤트 처리가 필요한 경우:
+
+```typescript
+<funnel.Render
+  stepName={funnel.Render.with({
+    events: {
+      success: (data, { history }) => history.push('nextStep', data),
+      error: (error, { history }) => history.push('errorStep', { error }),
+    },
+    render({ dispatch }) {
+      return (
+        <Form
+          onSuccess={(data) => dispatch('success', data)}
+          onError={(error) => dispatch('error', error)}
+        />
+      );
+    },
+  })}
+/>
+```
+
+### 3. 오버레이 단계 (funnel.Render.overlay)
+
+이전 단계를 유지하면서 모달처럼 표시:
+
+```typescript
+<funnel.Render
+  termsModal={funnel.Render.overlay({
+    render({ close }) {
+      return <TermsModal onClose={close} />;
+    },
+  })}
+/>
+```
+
+---
+
+## 진행 상황 표시 (FunnelProgressBar)
+
+이 프로젝트는 독립적인 `FunnelProgressBar` 컴포넌트를 제공합니다.
 
 ```tsx
 import { FunnelProgressBar } from '@/shared/ui/Funnel';
 
-function OnboardingPage() {
-  const funnel = useFunnel<OnboardingSteps>('email', {});
+const steps = ['category', 'experience', 'occupation', 'location', 'name'];
+const currentIndex = steps.indexOf(funnel.step) + 1;
 
-  const stepOrder: Array<keyof OnboardingSteps> = ['email', 'password', 'profile'];
-  const currentStepIndex = stepOrder.indexOf(funnel.currentStep) + 1;
-
-  return (
-    <div>
-      <FunnelProgressBar
-        totalSteps={stepOrder.length}
-        currentStep={currentStepIndex}
-        stepLabels={['이메일', '비밀번호', '프로필']}
-      />
-
-      <Funnel
-        currentStep={funnel.currentStep}
-        context={funnel.context}
-        onNext={funnel.setStep}
-        steps={{...}}
-      />
-    </div>
-  );
-}
+<FunnelProgressBar
+  totalSteps={steps.length}
+  currentStep={currentIndex}
+  stepLabels={['카테고리', '경력', '직업', '장소', '이름']}
+/>
 ```
 
-## useFunnel API
+---
 
-### 반환값
+## 주의사항
 
-- `currentStep`: 현재 활성화된 단계
-- `context`: 현재까지 수집된 모든 데이터
-- `history`: 단계 이동 히스토리
-- `setStep(step, data?)`: 다음 단계로 이동하면서 데이터 저장
-- `goBack()`: 이전 단계로 이동
-- `goToStep(step)`: 특정 단계로 직접 이동
-- `updateContext(data)`: context만 업데이트 (단계 이동 없이)
-- `reset()`: 초기 상태로 리셋
-- `canGoBack`: 뒤로 가기 가능 여부
+### 1. 타입 정의 규칙
 
-### 사용 예제
-
-```tsx
-// 다음 단계로 이동하면서 데이터 저장
-funnel.setStep('password', { email: 'user@example.com' });
-
-// 이전 단계로 이동
-funnel.goBack();
-
-// context만 업데이트
-funnel.updateContext({ nickname: 'johndoe' });
-
-// 처음부터 다시 시작
-funnel.reset();
-```
-
-## Form 컴포넌트와 함께 사용
-
-Funnel은 같은 폴더의 Form 컴포넌트와 완벽하게 통합됩니다:
-
-```tsx
-import { FormInput, FormRadio, FormSelect } from '@/shared/ui/Form';
-import { Funnel, useFunnel } from '@/shared/ui/Funnel';
-import { useForm } from 'react-hook-form';
-
-// 단계별 폼을 쉽게 구성할 수 있습니다
-```
-
-## 스타일링
-
-Funnel 컴포넌트는 다음 클래스명을 제공합니다:
-
-- `.funnel-container`: Funnel 컨테이너
-- `.funnel-progress-bar`: ProgressBar 컨테이너
-- `.progress-track`: 진행 바 트랙
-- `.progress-fill`: 진행 바 채우기
-- `.progress-labels`: 단계 레이블 컨테이너
-- `.progress-label`: 개별 단계 레이블
-  - `.active`: 현재 단계
-  - `.completed`: 완료된 단계
-- `.progress-text`: 진행 상황 텍스트
-
-## 고급 사용법
-
-### 조건부 단계
-
-특정 조건에 따라 단계를 건너뛸 수 있습니다:
-
-```tsx
-const handleNext = (data: any) => {
-  if (data.skipProfile) {
-    funnel.setStep('complete', data);
-  } else {
-    funnel.setStep('profile', data);
-  }
+❌ **잘못된 예시**:
+```typescript
+type Steps = {
+  step1: { data?: string };
+  step2: { data?: string }; // data가 필수인데 optional!
 };
 ```
 
-### 데이터 영속성
-
-브라우저 새로고침 시에도 데이터를 유지하려면 localStorage를 활용할 수 있습니다:
-
-```tsx
-const [initialContext] = useState(() => {
-  const saved = localStorage.getItem('onboarding-context');
-  return saved ? JSON.parse(saved) : {};
-});
-
-const funnel = useFunnel<OnboardingSteps>('email', initialContext);
-
-useEffect(() => {
-  localStorage.setItem('onboarding-context', JSON.stringify(funnel.context));
-}, [funnel.context]);
+✅ **올바른 예시**:
+```typescript
+type Steps = {
+  step1: { data?: string };
+  step2: { data: string }; // 이전 단계 데이터는 필수
+};
 ```
+
+### 2. context vs formData
+
+- `funnel.context`: Funnel 라이브러리가 관리하는 상태 (단계 간 전환)
+- `formData`: 로컬 state로 관리하는 입력 중 데이터
+
+대부분의 경우 `formData`를 사용하고, 단계 전환 시에만 `history.push`로 context에 전달하는 패턴을 권장합니다.
+
+### 3. history.back() vs history.replace()
+
+- `history.back()`: 브라우저 뒤로가기 (권장)
+- `history.replace()`: context만 업데이트 (단계 이동 X)
+
+---
+
+## 공식 문서
+
+더 자세한 내용은 @use-funnel 공식 문서를 참고하세요:
+
+- 📚 **공식 문서**: https://use-funnel.slash.page/ko
+- 📘 **funnel.Render 가이드**: https://use-funnel.slash.page/ko/docs/funnel-render
+- 🔧 **API 레퍼런스**: https://use-funnel.slash.page/ko/docs/use-funnel
+- 💡 **예제**: https://use-funnel.slash.page/ko/docs/example
+
+---
+
+## 마이그레이션 노트
+
+이전에는 커스텀 `useFunnel` 래퍼를 사용했으나, 2024년 12월부터 공식 라이브러리로 완전 전환했습니다.
+
+### 변경 사항
+
+| 이전 (커스텀)                             | 현재 (라이브러리)                        |
+|----------------------------------------|--------------------------------------|
+| `useFunnel(steps, options)`            | `useFunnel({ id, initial })`         |
+| `[Funnel, state, history]` (튜플)      | `funnel` (객체)                       |
+| `<Funnel><Funnel.Step>`                | `<funnel.Render stepName={...} />`   |
+| `state.currentStep`                    | `funnel.step`                        |
+| `state.context`                        | `funnel.context`                     |
+
+### 이점
+
+- ✅ 238라인의 커스텀 코드 제거
+- ✅ 라이브러리 업데이트 자동 반영
+- ✅ 공식 문서 및 커뮤니티 지원
+- ✅ 더 간결한 코드 (40% 감소)

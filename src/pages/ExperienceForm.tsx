@@ -30,7 +30,7 @@ import {
 } from "../shared/api/queries/experience-plan.hooks";
 import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
 import type { ClassTemplateData } from "../shared/api/queries/class.types";
-import { FakeTextarea, FakeTextareaRef } from "../shared/ui/FakeTextarea";
+// import { FakeTextarea, FakeTextareaRef } from "../shared/ui/FakeTextarea";
 import "@/shared/ui/addrlinkSample.css";
 import { useSnackbar } from "notistack";
 
@@ -193,10 +193,10 @@ export default function ExperienceForm({
   });
 
   // useRef를 사용하여 occupation, ingredients, steps, address 필드의 값을 관리
-  const occupationRef = useRef<FakeTextareaRef>(null);
+  const occupationRef = useRef<HTMLTextAreaElement>(null);
   const ingredientsRef = useRef<HTMLTextAreaElement>(null);
   const stepsRef = useRef<HTMLTextAreaElement>(null);
-  const addressRef = useRef<FakeTextareaRef>(null);
+  const addressRef = useRef<HTMLTextAreaElement>(null);
 
   // 초기 formData 값을 상수로 정의
   const initialFormData = {
@@ -224,12 +224,12 @@ export default function ExperienceForm({
     price: number;
     template: ClassTemplateData | null;
   }>(initialFormData);
-  const [addressKeyword, setAddressKeyword] = useState("");
-  const [addressResults, setAddressResults] = useState<JusoAddress[]>([]);
-  const [addressSearchError, setAddressSearchError] = useState<string | null>(
-    null
-  );
-  const [isAddressSearching, setIsAddressSearching] = useState(false);
+  // const [addressKeyword, setAddressKeyword] = useState("");
+  // const [addressResults, setAddressResults] = useState<JusoAddress[]>([]);
+  // const [addressSearchError, setAddressSearchError] = useState<string | null>(
+  //   null
+  // );
+  // const [isAddressSearching, setIsAddressSearching] = useState(false);
 
   const occupationPlaceholder = useMemo(
     () => getOccupationTitle(formData.category),
@@ -257,14 +257,20 @@ export default function ExperienceForm({
       setFormData(initialFormData);
 
       // ref 초기화
-      occupationRef.current?.reset();
+      if (occupationRef.current) {
+        occupationRef.current.value = "";
+      }
+
+      if (addressRef.current) {
+        addressRef.current.value = "";
+      }
+
       if (ingredientsRef.current) {
         ingredientsRef.current.value = "";
       }
       if (stepsRef.current) {
         stepsRef.current.value = "";
       }
-      addressRef.current?.reset();
 
       // funnel을 초기 단계로 리셋 (React Router의 navigate 사용)
       navigate("?", { replace: true });
@@ -285,53 +291,53 @@ export default function ExperienceForm({
     }
   }, [isOpen, navigate]);
 
-  const handleAddressSearch = async () => {
-    const sanitizedKeyword = sanitizeJusoKeyword(addressKeyword);
-    if (!sanitizedKeyword) {
-      setAddressSearchError("검색어를 입력해주세요.");
-      setAddressResults([]);
-      return;
-    }
+  // const handleAddressSearch = async () => {
+  //   const sanitizedKeyword = sanitizeJusoKeyword(addressKeyword);
+  //   if (!sanitizedKeyword) {
+  //     setAddressSearchError("검색어를 입력해주세요.");
+  //     setAddressResults([]);
+  //     return;
+  //   }
 
-    setIsAddressSearching(true);
-    setAddressSearchError(null);
-    try {
-      const results = await searchJusoAddress(sanitizedKeyword);
-      setAddressResults(results);
-      if (!results.length) {
-        setAddressSearchError(
-          "검색 결과가 없습니다. 다른 키워드를 입력해주세요."
-        );
-      }
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "주소 검색에 실패했습니다. 잠시 후 다시 시도해주세요.";
-      setAddressSearchError(message);
-      setAddressResults([]);
-    } finally {
-      setIsAddressSearching(false);
-    }
-  };
+  //   setIsAddressSearching(true);
+  //   setAddressSearchError(null);
+  //   try {
+  //     const results = await searchJusoAddress(sanitizedKeyword);
+  //     setAddressResults(results);
+  //     if (!results.length) {
+  //       setAddressSearchError(
+  //         "검색 결과가 없습니다. 다른 키워드를 입력해주세요."
+  //       );
+  //     }
+  //   } catch (error) {
+  //     const message =
+  //       error instanceof Error
+  //         ? error.message
+  //         : "주소 검색에 실패했습니다. 잠시 후 다시 시도해주세요.";
+  //     setAddressSearchError(message);
+  //     setAddressResults([]);
+  //   } finally {
+  //     setIsAddressSearching(false);
+  //   }
+  // };
 
-  const handleSelectAddress = (item: JusoAddress) => {
-    const composed = [
-      item.zipNo ? `[${item.zipNo}]` : "",
-      item.roadAddr || item.jibunAddr,
-    ]
-      .filter(Boolean)
-      .join(" ");
-    const nextAddress = composed || item.roadAddr || item.jibunAddr || "";
+  // const handleSelectAddress = (item: JusoAddress) => {
+  //   const composed = [
+  //     item.zipNo ? `[${item.zipNo}]` : "",
+  //     item.roadAddr || item.jibunAddr,
+  //   ]
+  //     .filter(Boolean)
+  //     .join(" ");
+  //   const nextAddress = composed || item.roadAddr || item.jibunAddr || "";
 
-    setFormData((prev) => ({ ...prev, address: nextAddress }));
-    setAddressKeyword(item.roadAddr || "");
-    setAddressResults([]);
-    // if (addressRef.current) {
-    //   addressRef.current.value = nextAddress;
-    //   addressRef.current.focus();
-    // }
-  };
+  //   setFormData((prev) => ({ ...prev, address: nextAddress }));
+  //   setAddressKeyword(item.roadAddr || "");
+  //   setAddressResults([]);
+  //   if (addressRef.current) {
+  //     addressRef.current.value = nextAddress;
+  //     addressRef.current.focus();
+  //   }
+  // };
 
   return (
     <Sheet.Root
@@ -537,27 +543,15 @@ export default function ExperienceForm({
                         <VStack gap="$300">
                           <Text typography="heading3">어떤 일을 하시나요?</Text>
 
-                          <FakeTextarea
+                          <Textarea
                             ref={occupationRef}
-                            placeholder={
-                              CATEGORY_OPTIONS.find(
-                                (opt) => opt.value === formData.category
-                              )?.label + " 전문가"
-                            }
-                            defaultValue={
-                              CATEGORY_OPTIONS.find(
-                                (opt) => opt.value === formData.category
-                              )?.label + " 전문가"
-                            }
-                            className="large-input-placeholder"
-                            size="xl"
+                            placeholder={occupationPlaceholder}
+                            defaultValue={occupationPlaceholder}
                             autoResize
+                            size="lg"
                             style={{
-                              fontSize: "38px",
-                              lineHeight: "48px",
-                              border: "none",
-                              fontWeight: "bold",
-                              textAlign: "center",
+                              fontSize: "18px",
+                              lineHeight: "24px",
                             }}
                           />
                         </VStack>
@@ -653,14 +647,8 @@ export default function ExperienceForm({
                             placeholder="예: 돌, 시멘트, 흙손 등"
                             defaultValue={formData.ingredients}
                             autoResize
-                            size="xl"
-                            style={{
-                              fontSize: "32px",
-                              lineHeight: "44px",
-                              minHeight: "300px",
-                              maxHeight: "630px",
-                              fontWeight: "bold",
-                            }}
+                            size="lg"
+                            style={{ fontSize: "18px", lineHeight: "24px" }}
                           />
                         </VStack>
                       )}
@@ -749,14 +737,8 @@ export default function ExperienceForm({
                           placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
                           defaultValue={formData.steps}
                           autoResize
-                          size="xl"
-                          style={{
-                            fontSize: "32px",
-                            lineHeight: "44px",
-                            minHeight: "300px",
-                            maxHeight: "630px",
-                            fontWeight: "bold",
-                          }}
+                          size="lg"
+                          style={{ fontSize: "18px", lineHeight: "24px" }}
                         />
                       </VStack>
                     </Box>
@@ -806,7 +788,7 @@ export default function ExperienceForm({
                         <Text typography="heading3">
                           신청자와 만나는 장소가 어디인가요?
                         </Text>
-                        <Box className="addrlink-search-box">
+                        {/* <Box className="addrlink-search-box">
                           <div className="addrlink-search-form">
                             <TextInput
                               placeholder="도로명 / 건물명 / 지번으로 검색"
@@ -867,22 +849,15 @@ export default function ExperienceForm({
                               ))}
                             </div>
                           ) : null}
-                        </Box>
+                        </Box> */}
 
-                        <FakeTextarea
+                        <Textarea
                           ref={addressRef}
                           defaultValue="체험 장소를 입력하세요"
                           placeholder="체험 장소를 입력하세요"
-                          className="large-input-placeholder"
-                          size="xl"
+                          size="lg"
+                          style={{ fontSize: "18px", lineHeight: "24px" }}
                           autoResize
-                          style={{
-                            fontSize: "38px",
-                            lineHeight: "48px",
-                            border: "none",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                          }}
                         />
                       </VStack>
                     </Box>
@@ -1081,6 +1056,11 @@ export default function ExperienceForm({
                               height={80}
                             />
                           </Box>
+                          <SkeletonGroup gap={12} vertical>
+                            <Skeleton variant="text" width="100%" height={20} />
+                            <Skeleton variant="text" width="90%" height={20} />
+                            <Skeleton variant="text" width="80%" height={20} />
+                          </SkeletonGroup>
                         </VStack>
                       ) : (
                         <VStack gap="$300">
@@ -1104,82 +1084,87 @@ export default function ExperienceForm({
                         </VStack>
                       )}
                     </Box>
-                    <Box
-                      style={{
-                        padding: "24px",
-                        paddingBottom: "30px",
-                        backgroundColor: "$white",
-                      }}
-                    >
-                      <VStack gap="$300">
-                        <HStack gap="$150">
-                          <Button
-                            type="button"
-                            width="100%"
-                            size="xl"
-                            variant="outline"
-                            onClick={() => history.back()}
-                            disabled={generateExperiencePlanMutation.isPending}
-                          >
-                            이전
-                          </Button>
-                          <Button
-                            type="button"
-                            width="100%"
-                            size="xl"
-                            onClick={async () => {
-                              try {
-                                const response =
-                                  await generateExperiencePlanMutation.mutateAsync(
-                                    {
-                                      category: formData.category,
-                                      years_of_experience: String(
-                                        formData.experienceYears
-                                      ),
-                                      job_description: formData.occupation,
-                                      materials: formData.ingredients,
-                                      location: formData.address,
-                                      duration_minutes: String(
-                                        formData.duration
-                                      ),
-                                      capacity: String(formData.maxCapacity),
-                                      price_per_person: String(formData.price),
-                                    }
-                                  );
+                    {!generateExperiencePlanMutation.isPending && (
+                      <Box
+                        style={{
+                          padding: "24px",
+                          paddingBottom: "30px",
+                          backgroundColor: "$white",
+                        }}
+                      >
+                        <VStack gap="$300">
+                          <HStack gap="$150">
+                            <Button
+                              type="button"
+                              width="100%"
+                              size="xl"
+                              variant="outline"
+                              onClick={() => history.back()}
+                            >
+                              이전
+                            </Button>
+                            <Button
+                              type="button"
+                              width="100%"
+                              size="xl"
+                              onClick={async () => {
+                                try {
+                                  const response =
+                                    await generateExperiencePlanMutation.mutateAsync(
+                                      {
+                                        category: formData.category,
+                                        years_of_experience: String(
+                                          formData.experienceYears
+                                        ),
+                                        job_description: formData.occupation,
+                                        materials: formData.ingredients,
+                                        location: formData.address,
+                                        duration_minutes: String(
+                                          formData.duration
+                                        ),
+                                        capacity: String(formData.maxCapacity),
+                                        price_per_person: String(
+                                          formData.price
+                                        ),
+                                      }
+                                    );
 
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  template: response,
-                                }));
-                                history.push("recommendation", {
-                                  price: formData.price,
-                                });
-                              } catch (error) {
-                                console.error(
-                                  "체험 템플릿 생성 API 호출 실패:",
-                                  error
-                                );
-                                enqueueSnackbar(
-                                  "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요.",
-                                  { variant: "error" }
-                                );
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    template: response,
+                                  }));
+                                  history.push("recommendation", {
+                                    price: formData.price,
+                                  });
+                                } catch (error) {
+                                  console.error(
+                                    "체험 템플릿 생성 API 호출 실패:",
+                                    error
+                                  );
+                                  enqueueSnackbar(
+                                    "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요.",
+                                    { variant: "error" }
+                                  );
+                                }
+                              }}
+                              disabled={
+                                generateExperiencePlanMutation.isPending
                               }
-                            }}
-                            disabled={generateExperiencePlanMutation.isPending}
-                          >
-                            {generateExperiencePlanMutation.isPending
-                              ? "템플릿 생성 중..."
-                              : "다음"}
-                          </Button>
-                        </HStack>
-                        <PriceSelector
-                          selectedPrice={formData.price}
-                          onChange={(value) =>
-                            setFormData({ ...formData, price: value })
-                          }
-                        />
-                      </VStack>
-                    </Box>
+                            >
+                              {generateExperiencePlanMutation.isPending
+                                ? "템플릿 생성 중..."
+                                : "다음"}
+                            </Button>
+                          </HStack>
+                          <PriceSelector
+                            selectedPrice={formData.price}
+                            onChange={(value) =>
+                              setFormData({ ...formData, price: value })
+                            }
+                          />
+                        </VStack>
+                      </Box>
+                    )}
                   </>
                 )}
                 recommendation={({ history }) => (
@@ -1191,7 +1176,9 @@ export default function ExperienceForm({
                         padding: "24px",
                       }}
                     >
-                      {createClassMutation.isPending || !formData.template ? (
+                      {generateExperiencePlanMutation.isPending ||
+                      createClassMutation.isPending ||
+                      !formData.template ? (
                         <VStack gap="$300">
                           <Skeleton variant="text" width="50%" height={36} />
                           <Box
@@ -1282,7 +1269,7 @@ export default function ExperienceForm({
                                 "체험이 성공적으로 등록되었습니다!",
                                 { variant: "success" }
                               );
-                              navigate("/");
+                              navigate("/creator");
                             } catch (error) {
                               console.error("체험 등록 API 호출 실패:", error);
 

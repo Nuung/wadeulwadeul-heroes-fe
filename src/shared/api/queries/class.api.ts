@@ -1,60 +1,109 @@
 /**
- * Class API 함수
+ * Class API Functions
  */
 
 import { apiDelete, apiGet, apiPost, apiPut } from "..";
 import type {
-  Class,
+  ClassCreate,
+  ClassEnrollmentResponse,
   ClassListParams,
-  ClassListResponse,
-  CreateClassDto,
-  UpdateClassDto,
+  ClassResponse,
+  ClassUpdate,
+  EnrollmentCreate,
+  EnrollmentResponse,
 } from "./class.types";
 
 /**
- * 클래스 목록 조회
+ * Create Class
  */
-export const getClasses = (params?: ClassListParams) => {
-  return apiGet<ClassListResponse, ClassListParams>({
+export const createClass = async (data: ClassCreate) => {
+  return apiPost<ClassResponse, ClassCreate>({
+    endpoint: "/api/v1/classes/",
+    data,
+  });
+};
+
+/**
+ * List Classes
+ */
+export const getClasses = async (params?: ClassListParams) => {
+  return apiGet<ClassResponse[], ClassListParams>({
     endpoint: "/api/v1/classes/",
     params,
   });
 };
 
 /**
- * 클래스 상세 조회
+ * List Classes Public
  */
-export const getClass = async (id: number) => {
-  return apiGet<Class>({
-    endpoint: `/class/${id}`,
+export const getClassesPublic = async (params?: ClassListParams) => {
+  return apiGet<ClassResponse[], ClassListParams>({
+    endpoint: "/api/v1/classes/public",
+    params,
   });
 };
 
 /**
- * 클래스 생성
+ * Get Class By Id
  */
-export const createClass = async (data: CreateClassDto) => {
-  return apiPost<Class, CreateClassDto>({
-    endpoint: "/class",
+export const getClassById = async (class_id: string) => {
+  return apiGet<ClassResponse>({
+    endpoint: `/api/v1/classes/${class_id}`,
+  });
+};
+
+/**
+ * Update Class
+ */
+export const updateClass = async (class_id: string, data: ClassUpdate) => {
+  return apiPut<ClassResponse, ClassUpdate>({
+    endpoint: `/api/v1/classes/${class_id}`,
     data,
   });
 };
 
 /**
- * 클래스 수정
+ * Delete Class
  */
-export const updateClass = async (id: number, data: UpdateClassDto) => {
-  return apiPut<Class, UpdateClassDto>({
-    endpoint: `/class/${id}`,
-    data,
-  });
-};
-
-/**
- * 클래스 삭제
- */
-export const deleteClass = async (id: number) => {
+export const deleteClass = async (class_id: string) => {
   return apiDelete<void>({
-    endpoint: `/class/${id}`,
+    endpoint: `/api/v1/classes/${class_id}`,
+  });
+};
+
+/**
+ * Enroll Class
+ */
+export const enrollClass = async (class_id: string, data: EnrollmentCreate) => {
+  return apiPost<EnrollmentResponse, EnrollmentCreate>({
+    endpoint: `/api/v1/classes/${class_id}/enroll`,
+    data,
+  });
+};
+
+/**
+ * List My Enrollments
+ */
+export const getMyEnrollments = async () => {
+  return apiGet<EnrollmentResponse[]>({
+    endpoint: "/api/v1/classes/enrollments/me",
+  });
+};
+
+/**
+ * Delete Enrollment
+ */
+export const deleteEnrollment = async (enrollment_id: string) => {
+  return apiDelete<void>({
+    endpoint: `/api/v1/classes/enrollments/${enrollment_id}`,
+  });
+};
+
+/**
+ * List My Classes Enrollments
+ */
+export const getMyClassesEnrollments = async () => {
+  return apiGet<ClassEnrollmentResponse[]>({
+    endpoint: "/api/v1/classes/my-classes/enrollments",
   });
 };

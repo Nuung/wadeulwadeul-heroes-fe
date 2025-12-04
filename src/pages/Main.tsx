@@ -7,7 +7,7 @@ export default function Main() {
   return (
     <HStack>
       <Button onClick={() => navigate("/creator")}>클래스를 만들래요</Button>
-      <Button onClick={() => navigate("/content")}>클래스에 참여할래요</Button>
+      <Button onClick={() => navigate("/user")}>클래스에 참여할래요</Button>
     </HStack>
   );
 }

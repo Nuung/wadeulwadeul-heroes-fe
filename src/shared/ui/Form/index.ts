@@ -1,8 +1,9 @@
 // Components
 export { FormField } from './FormField';
-export { FormInput } from './FormInput';
 export { FormRadioGroup } from './FormRadio';
 
+// Re-export from @vapor-ui/core
+export { TextInput as FormInput } from '@vapor-ui/core';
+
 // Types
-export type { FormInputProps } from './FormInput';
 export type { RadioOption } from './FormRadio';

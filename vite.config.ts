@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import { resolve } from "path";
 
 export const API_PREFIX = "/wadeul";
@@ -10,8 +11,7 @@ export default defineConfig(({ mode }) => {
   const buildTimestamp = Date.now();
 
   return {
-    plugins: [react()],
-    css: { postcss: "./postcss.config.js" },
+    plugins: [react(), tailwindcss()],
 
     server: {
       host: "0.0.0.0",

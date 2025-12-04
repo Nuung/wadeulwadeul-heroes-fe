@@ -10,3 +10,6 @@ resources:
 commonLabels:
   app: frontend
   team: goormthon-5
+
+generatorOptions:
+  disableNameSuffixHash: true

@@ -1,0 +1,226 @@
+/* Skeleton Base Styles */
+.skeleton {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  background-color: #e0e0e0;
+  background-color: rgba(0, 0, 0, 0.11);
+}
+
+/* Skeleton Variants */
+.skeleton-rectangular {
+  border-radius: 0;
+}
+
+.skeleton-circular {
+  border-radius: 50%;
+}
+
+.skeleton-text {
+  border-radius: 4px;
+  transform: scale(1, 0.6);
+  transform-origin: 0 60%;
+}
+
+.skeleton-rounded {
+  border-radius: 12px;
+}
+
+/* Wave Animation (Airbnb style shimmer effect) */
+.skeleton-wave {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.11) 0%,
+    rgba(0, 0, 0, 0.11) 40%,
+    rgba(0, 0, 0, 0.04) 50%,
+    rgba(0, 0, 0, 0.11) 60%,
+    rgba(0, 0, 0, 0.11) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-wave {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: -200% 50%;
+  }
+}
+
+/* Alternative Wave Animation with pseudo-element for smoother effect */
+.skeleton-wave::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Pulse Animation */
+.skeleton-pulse {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .skeleton {
+    background-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .skeleton-wave {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.12) 40%,
+      rgba(255, 255, 255, 0.08) 50%,
+      rgba(255, 255, 255, 0.12) 60%,
+      rgba(255, 255, 255, 0.12) 100%
+    );
+  }
+
+  .skeleton-wave::after {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.08),
+      transparent
+    );
+  }
+}
+
+/* Preset Components */
+
+/* Card Skeleton */
+.skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0;
+  width: 100%;
+}
+
+.skeleton-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+/* List Item Skeleton */
+.skeleton-list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.skeleton-list-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Image Card Skeleton (Airbnb style) */
+.skeleton-image-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.skeleton-image-card-content {
+  padding: 0 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .skeleton-wave::after {
+    animation-duration: 1.8s;
+  }
+}
+
+/* Performance optimization: Disable animations on reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-wave,
+  .skeleton-wave::after,
+  .skeleton-pulse {
+    animation: none;
+  }
+
+  .skeleton-wave::after {
+    display: none;
+  }
+}
+
+/* Grid Layout Support */
+.skeleton-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.skeleton-grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.skeleton-grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.skeleton-grid-cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 1024px) {
+  .skeleton-grid-cols-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .skeleton-grid-cols-4,
+  .skeleton-grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .skeleton-grid-cols-4,
+  .skeleton-grid-cols-3,
+  .skeleton-grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+}

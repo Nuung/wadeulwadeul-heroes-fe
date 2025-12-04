@@ -17,12 +17,15 @@ import { NumberStepper } from "../shared/ui/Number/NumberStepper";
 import { CategoryCard, CategoryOption } from "../shared/ui/CategoryCard";
 import TimeSelector from "../shared/ui/select/TimeSelector";
 import PriceSelector from "../shared/ui/select/PriceSelector";
+import { ClassTemplate } from "../shared/ui/ClassTemplate";
+import { Skeleton, SkeletonGroup } from "../shared/ui/Skeleton";
 import {
   useSuggestMaterialsMutation,
   useSuggestStepsMutation,
   useGenerateExperiencePlanMutation,
 } from "../shared/api/queries/experience-plan.hooks";
 import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
+import type { ClassTemplateData } from "../shared/api/queries/class.types";
 
 // 10단계 Funnel 타입 정의
 type ExperienceFormSteps = {
@@ -160,7 +163,7 @@ export default function ExperienceForm({
     duration: number;
     maxCapacity: number;
     price: number;
-    template: any;
+    template: ClassTemplateData | null;
   }>({
     category: "",
     experienceYears: 0,
@@ -187,10 +190,6 @@ export default function ExperienceForm({
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
-    if (!open) {
-      // Sheet가 닫히면 메인 페이지로 이동
-      navigate("/");
-    }
   };
 
   return (
@@ -386,30 +385,41 @@ export default function ExperienceForm({
                         padding: "24px",
                       }}
                     >
-                      <VStack gap="$300">
-                        <Text typography="heading3">어떤 일을 하시나요?</Text>
-                        <Field.Root name="occupation">
-                          <Textarea
-                            ref={occupationRef}
-                            placeholder={
-                              CATEGORY_OPTIONS.find(
-                                (opt) => opt.value === formData.category
-                              )?.label + " 전문가"
-                            }
-                            defaultValue={formData.occupation}
-                            className="large-input-placeholder"
-                            size="xl"
-                            autoResize
-                            style={{
-                              fontSize: "38px",
-                              lineHeight: "48px",
-                              border: "none",
-                              fontWeight: "normal",
-                              textAlign: "center",
-                            }}
-                          />
-                        </Field.Root>
-                      </VStack>
+                      {suggestMaterialsMutation.isPending ? (
+                        <VStack gap="$300">
+                          <Skeleton variant="text" width="60%" height={36} />
+                          <SkeletonGroup gap={16} vertical>
+                            <Skeleton variant="rounded" height={200} />
+                            <Skeleton variant="text" width="80%" height={24} />
+                            <Skeleton variant="text" width="40%" height={24} />
+                          </SkeletonGroup>
+                        </VStack>
+                      ) : (
+                        <VStack gap="$300">
+                          <Text typography="heading3">어떤 일을 하시나요?</Text>
+                          <Field.Root name="occupation">
+                            <Textarea
+                              ref={occupationRef}
+                              placeholder={
+                                CATEGORY_OPTIONS.find(
+                                  (opt) => opt.value === formData.category
+                                )?.label + " 전문가"
+                              }
+                              defaultValue={formData.occupation}
+                              className="large-input-placeholder"
+                              size="xl"
+                              autoResize
+                              style={{
+                                fontSize: "38px",
+                                lineHeight: "48px",
+                                border: "none",
+                                fontWeight: "normal",
+                                textAlign: "center",
+                              }}
+                            />
+                          </Field.Root>
+                        </VStack>
+                      )}
                     </Box>
                     <Box
                       style={{
@@ -480,32 +490,42 @@ export default function ExperienceForm({
                         padding: "24px",
                       }}
                     >
-                      <VStack gap="$300">
-                        <Text typography="heading3">
-                          준비해야 하는 재료는 무엇인가요?
-                        </Text>
-                        <Field.Root name="ingredients">
-                          <Field.Label>재료</Field.Label>
-                          <Textarea
-                            ref={ingredientsRef}
-                            placeholder="예: 돌, 시멘트, 흙손 등"
-                            value={formData.ingredients}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                ingredients: e.target.value,
-                              })
-                            }
-                            autoResize
-                            size="xl"
-                            style={{
-                              fontSize: "32px",
-                              lineHeight: "44px",
-                              minHeight: "300px",
-                            }}
-                          />
-                        </Field.Root>
-                      </VStack>
+                      {suggestStepsMutation.isPending ? (
+                        <VStack gap="$300">
+                          <Skeleton variant="text" width="70%" height={36} />
+                          <SkeletonGroup gap={12} vertical>
+                            <Skeleton variant="text" width="30%" height={20} />
+                            <Skeleton variant="rounded" height={300} />
+                          </SkeletonGroup>
+                        </VStack>
+                      ) : (
+                        <VStack gap="$300">
+                          <Text typography="heading3">
+                            준비해야 하는 재료는 무엇인가요?
+                          </Text>
+                          <Field.Root name="ingredients">
+                            <Field.Label>재료</Field.Label>
+                            <Textarea
+                              ref={ingredientsRef}
+                              placeholder="예: 돌, 시멘트, 흙손 등"
+                              value={formData.ingredients}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  ingredients: e.target.value,
+                                })
+                              }
+                              autoResize
+                              size="xl"
+                              style={{
+                                fontSize: "32px",
+                                lineHeight: "44px",
+                                minHeight: "300px",
+                              }}
+                            />
+                          </Field.Root>
+                        </VStack>
+                      )}
                     </Box>
                     <Box
                       style={{
@@ -851,26 +871,43 @@ export default function ExperienceForm({
                         padding: "24px",
                       }}
                     >
-                      <VStack gap="$300">
-                        <Text typography="heading3">게스트 1인당 요금</Text>
-                        <Field.Root name="price">
+                      {generateExperiencePlanMutation.isPending ? (
+                        <VStack gap="$300">
+                          <Skeleton variant="text" width="50%" height={36} />
                           <Box
                             display="flex"
                             justifyContent="center"
                             width="100%"
                           >
-                            <NumberStepper
-                              value={formData.price}
-                              showButtons={false}
-                              onChange={(value) =>
-                                setFormData({ ...formData, price: value })
-                              }
-                              min={5000}
-                              max={1000000}
+                            <Skeleton
+                              variant="rounded"
+                              width={200}
+                              height={80}
                             />
                           </Box>
-                        </Field.Root>
-                      </VStack>
+                        </VStack>
+                      ) : (
+                        <VStack gap="$300">
+                          <Text typography="heading3">게스트 1인당 요금</Text>
+                          <Field.Root name="price">
+                            <Box
+                              display="flex"
+                              justifyContent="center"
+                              width="100%"
+                            >
+                              <NumberStepper
+                                value={formData.price}
+                                showButtons={false}
+                                onChange={(value) =>
+                                  setFormData({ ...formData, price: value })
+                                }
+                                min={5000}
+                                max={1000000}
+                              />
+                            </Box>
+                          </Field.Root>
+                        </VStack>
+                      )}
                     </Box>
                     <Box
                       style={{
@@ -917,7 +954,7 @@ export default function ExperienceForm({
 
                                 setFormData((prev) => ({
                                   ...prev,
-                                  template: response.template,
+                                  template: response,
                                 }));
                                 history.push("recommendation", {
                                   price: formData.price,
@@ -958,22 +995,53 @@ export default function ExperienceForm({
                         padding: "24px",
                       }}
                     >
-                      <VStack gap="$300">
-                        <Text typography="heading3">추천 수업 템플릿</Text>
-                        <Box
-                          padding="$400"
-                          backgroundColor="$canvas-100"
-                          borderRadius="$300"
-                        >
-                          <Text
-                            typography="body1"
-                            style={{ whiteSpace: "pre-wrap" }}
+                      {createClassMutation.isPending || !formData.template ? (
+                        <VStack gap="$300">
+                          <Skeleton variant="text" width="50%" height={36} />
+                          <Box
+                            padding="$400"
+                            backgroundColor="$canvas-100"
+                            borderRadius="$300"
                           >
-                            {formData.template ||
-                              "입력하신 정보를 바탕으로 체험이 준비되었습니다!"}
-                          </Text>
-                        </Box>
-                      </VStack>
+                            <SkeletonGroup gap={20} vertical>
+                              <Skeleton
+                                variant="text"
+                                width="70%"
+                                height={28}
+                              />
+                              <Skeleton variant="rounded" height={150} />
+                              <SkeletonGroup gap={12} vertical>
+                                <Skeleton
+                                  variant="text"
+                                  width="100%"
+                                  height={20}
+                                />
+                                <Skeleton
+                                  variant="text"
+                                  width="90%"
+                                  height={20}
+                                />
+                                <Skeleton
+                                  variant="text"
+                                  width="80%"
+                                  height={20}
+                                />
+                              </SkeletonGroup>
+                            </SkeletonGroup>
+                          </Box>
+                        </VStack>
+                      ) : (
+                        <VStack gap="$300">
+                          <Text typography="heading3">추천 수업 템플릿</Text>
+                          <Box
+                            padding="$400"
+                            backgroundColor="$canvas-100"
+                            borderRadius="$300"
+                          >
+                            <ClassTemplate template={formData.template} />
+                          </Box>
+                        </VStack>
+                      )}
                     </Box>
                     <Box
                       style={{

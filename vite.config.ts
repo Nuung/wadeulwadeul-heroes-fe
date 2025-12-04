@@ -2,51 +2,45 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 
-export const BASE_URL = "/wadeul";
+export const API_PREFIX = "/wadeul";
 export const BASE_SERVER_URL = "https://goormthon-5.goorm.training";
 
 export default defineConfig(({ mode }) => {
-  // 설정 파일이 올바르게 실행되는지, 어떤 모드인지 확인하기 위한 로그
-  console.log(`[vite.config.ts] Vite가 '${mode}' 모드로 실행 중입니다.`);
   const isProduction = mode === "production";
-
-  // 빌드 타임스탬프 생성
   const buildTimestamp = Date.now();
 
   return {
     plugins: [react()],
-    css: {
-      postcss: "./postcss.config.js",
-    },
+    css: { postcss: "./postcss.config.js" },
+
     server: {
       host: "0.0.0.0",
       port: 5173,
       proxy: {
-        [BASE_URL!]: {
+        [API_PREFIX]: {
           target: BASE_SERVER_URL,
           changeOrigin: true,
-          // 프록시 동작을 실시간으로 터미널에 로깅합니다.
-          rewrite: (path: any) => path.replace(new RegExp(`^${BASE_URL}`), ""),
+          rewrite: (path) => path.replace(/^\/wadeul/, ""),
           configure: (proxy, _options) => {
             if (isProduction) return;
+
             proxy.on("proxyReq", (proxyReq, req, _res) => {
-              const hostHeader = proxyReq.getHeader("host"); // host:port 형식으로 나옵니다.
+              const hostHeader = proxyReq.getHeader("host");
               console.log(
-                `[Vite Proxy] Request: ${req.method} ${req.headers.host}${req.url} -> ${proxyReq.protocol}//${hostHeader}${proxyReq.path}`
+                `[Proxy] ${req.method} ${req.url} -> ${proxyReq.protocol}//${hostHeader}${proxyReq.path}`
               );
             });
+
             proxy.on("proxyRes", (proxyRes, req, _res) => {
-              console.log(
-                `[Vite Proxy] Response: ${proxyRes.statusCode} ${req.url}`
-              );
+              console.log(`[Proxy] Response ${proxyRes.statusCode} ${req.url}`);
             });
-            proxy.on("error", (err, _req, _res) => {
-              console.error("[Vite Proxy] Error: ", err);
-            });
+
+            proxy.on("error", (err) => console.error("[Proxy] Error: ", err));
           },
         },
       },
     },
+
     resolve: {
       alias: {
         "@": resolve("src"),
@@ -57,22 +51,18 @@ export default defineConfig(({ mode }) => {
         "@shared": resolve("src/shared"),
       },
     },
+
     build: {
       minify: "esbuild",
       outDir: "dist",
       assetsDir: "assets",
-      sourcemap: isProduction ? false : true,
+      sourcemap: !isProduction,
       cssCodeSplit: true,
       rollupOptions: {
         output: {
           manualChunks: {
             vendor: ["react", "react-dom", "react-router"],
-            //TODO: 사용하는 라이브러리만 남기고 제거
-            // utils: ["date-fns", "lodash", "axios"],
-            // i18n: ["react-i18next", "i18next"],
-            // query: ["@tanstack/react-query"],
           },
-          // 타임스탬프를 포함한 파일명으로 캐시 무효화 강화
           chunkFileNames: isProduction
             ? `assets/[name]-[hash]-${buildTimestamp}.js`
             : "assets/[name]-[hash].js",
@@ -83,41 +73,6 @@ export default defineConfig(({ mode }) => {
             ? `assets/[name]-[hash]-${buildTimestamp}.[ext]`
             : "assets/[name]-[hash].[ext]",
         },
-        treeshake: {
-          preset: "recommended",
-          moduleSideEffects: false,
-        },
-      },
-      chunkSizeWarningLimit: 1000,
-      reportCompressedSize: true,
-      target: "es2020",
-      cssTarget: "chrome80",
-    },
-    esbuild: {
-      logOverride: { "this-is-undefined-in-esm": "silent" },
-    },
-    optimizeDeps: {
-      include: [
-        "react",
-        "react-dom",
-        "react-router",
-        "react-is",
-        "prop-types",
-        "date-fns",
-        "lodash",
-        "axios",
-        "react-i18next",
-        "i18next",
-        "@tanstack/react-query",
-      ],
-      esbuildOptions: {
-        target: "es2020",
-        supported: {
-          "top-level-await": true,
-        },
-        treeShaking: true,
-        minify: true,
-        legalComments: "none",
       },
     },
   };

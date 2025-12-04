@@ -125,9 +125,16 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
   },
 ];
 
-export default function ExperienceForm() {
+interface ExperienceFormProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
+
+export default function ExperienceForm({
+  isOpen,
+  setIsOpen,
+}: ExperienceFormProps) {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
 
   const funnel = useFunnel<ExperienceFormSteps>({
     id: "experience-form",

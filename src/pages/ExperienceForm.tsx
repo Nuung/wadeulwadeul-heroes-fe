@@ -1129,39 +1129,42 @@ export default function ExperienceForm({
                                       }
                                     );
 
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  template: response,
-                                }));
-                                history.push("recommendation", {
-                                  price: formData.price,
-                                });
-                              } catch (error) {
-                                console.error(
-                                  "체험 템플릿 생성 API 호출 실패:",
-                                  error
-                                );
-                                enqueueSnackbar(
-                                  "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요.",
-                                  { variant: "error" }
-                                );
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    template: response,
+                                  }));
+                                  history.push("recommendation", {
+                                    price: formData.price,
+                                  });
+                                } catch (error) {
+                                  console.error(
+                                    "체험 템플릿 생성 API 호출 실패:",
+                                    error
+                                  );
+                                  enqueueSnackbar(
+                                    "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요.",
+                                    { variant: "error" }
+                                  );
+                                }
+                              }}
+                              disabled={
+                                generateExperiencePlanMutation.isPending
                               }
-                            }}
-                            disabled={generateExperiencePlanMutation.isPending}
-                          >
-                            {generateExperiencePlanMutation.isPending
-                              ? "템플릿 생성 중..."
-                              : "다음"}
-                          </Button>
-                        </HStack>
-                        <PriceSelector
-                          selectedPrice={formData.price}
-                          onChange={(value) =>
-                            setFormData({ ...formData, price: value })
-                          }
-                        />
-                      </VStack>
-                    </Box>
+                            >
+                              {generateExperiencePlanMutation.isPending
+                                ? "템플릿 생성 중..."
+                                : "다음"}
+                            </Button>
+                          </HStack>
+                          <PriceSelector
+                            selectedPrice={formData.price}
+                            onChange={(value) =>
+                              setFormData({ ...formData, price: value })
+                            }
+                          />
+                        </VStack>
+                      </Box>
+                    )}
                   </>
                 )}
                 recommendation={({ history }) => (
@@ -1266,7 +1269,7 @@ export default function ExperienceForm({
                                 "체험이 성공적으로 등록되었습니다!",
                                 { variant: "success" }
                               );
-                              navigate("/");
+                              navigate("/creator");
                             } catch (error) {
                               console.error("체험 등록 API 호출 실패:", error);
 

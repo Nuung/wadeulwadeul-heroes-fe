@@ -1,10 +1,14 @@
 /* Skeleton Base Styles */
+/* Ant Design & Material-UI 표준 스타일 참고 */
 .skeleton {
   display: inline-block;
   position: relative;
   overflow: hidden;
-  background-color: #e0e0e0;
-  background-color: rgba(0, 0, 0, 0.11);
+  /* 고정된 회색 - 배경색에 관계없이 확실히 보임 */
+  background-color: #d9d9d9;
+  /* 추가 보장을 위한 최소 크기 */
+  min-width: 20px;
+  min-height: 20px;
 }
 
 /* Skeleton Variants */
@@ -26,15 +30,15 @@
   border-radius: 12px;
 }
 
-/* Wave Animation (Airbnb style shimmer effect) */
+/* Wave Animation (Material-UI style) */
 .skeleton-wave {
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.11) 0%,
-    rgba(0, 0, 0, 0.11) 40%,
-    rgba(0, 0, 0, 0.04) 50%,
-    rgba(0, 0, 0, 0.11) 60%,
-    rgba(0, 0, 0, 0.11) 100%
+    #d9d9d9 0%,
+    #d9d9d9 40%,
+    #efefef 50%,
+    #d9d9d9 60%,
+    #d9d9d9 100%
   );
   background-size: 200% 100%;
   animation: skeleton-wave 1.5s ease-in-out infinite;
@@ -89,35 +93,6 @@
   }
   100% {
     opacity: 1;
-  }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .skeleton {
-    background-color: rgba(255, 255, 255, 0.12);
-  }
-
-  .skeleton-wave {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.12) 0%,
-      rgba(255, 255, 255, 0.12) 40%,
-      rgba(255, 255, 255, 0.08) 50%,
-      rgba(255, 255, 255, 0.12) 60%,
-      rgba(255, 255, 255, 0.12) 100%
-    );
-  }
-
-  .skeleton-wave::after {
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.08),
-      rgba(255, 255, 255, 0.12),
-      rgba(255, 255, 255, 0.08),
-      transparent
-    );
   }
 }
 

@@ -9,13 +9,13 @@ export type UserTypeEnum = "young" | "old";
 export interface UserResponse {
   id: string;
   name: string;
-  email: string;
+  email: string | null;
   type: UserTypeEnum;
 }
 
 export interface UserCreate {
   name: string;
-  email: string;
+  email?: string | null;
   type?: UserTypeEnum;
 }
 

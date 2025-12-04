@@ -55,7 +55,7 @@ export type {
   FunnelStepProps,
 } from './useFunnel';
 
-export type { FunnelComponent } from './FunnelComponent';
+export type { FunnelComponent } from './useFunnel';
 
 // Progress Components
 export {

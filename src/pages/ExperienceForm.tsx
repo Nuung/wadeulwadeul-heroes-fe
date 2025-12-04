@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Field, TextInput, Button, VStack, HStack, Text, Box, Sheet } from '@vapor-ui/core';
 import { useFunnel } from '../shared/ui/Funnel';
@@ -83,6 +83,7 @@ export default function ExperienceForm() {
   const [Funnel, state, history] = useFunnel<ExperienceFormSteps>(
     ['category', 'experience', 'occupation', 'expertise', 'location', 'name', 'duration', 'capacity', 'price'] as const,
     {
+      id: 'experience-form',
       initialStep: 'category',
       initialContext: {},
     }
@@ -104,6 +105,11 @@ export default function ExperienceForm() {
     console.log('최종 제출 데이터:', formData);
     alert('체험이 등록되었습니다!');
   };
+
+  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      console.log('e', e)
+      setFormData({ ...formData, 'occupation': e.target.value });
+  }, [formData]);
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
@@ -198,7 +204,7 @@ export default function ExperienceForm() {
                       <TextInput
                         placeholder="돌담 쌓기"
                         value={formData.occupation}
-                        onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                        onChange={handleInput}
                       />
                     </Field.Root>
                     <HStack gap="$150">
@@ -395,7 +401,7 @@ export default function ExperienceForm() {
             {/* 진행 상황 표시 */}
             <Box marginTop="$400">
               <Text typography="body2" foreground="hint-100" className="v-text-center">
-                {state.history.length} / 9 단계
+                현재 단계: {String(state.currentStep)}
               </Text>
             </Box>
           </Box>

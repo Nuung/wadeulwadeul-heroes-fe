@@ -1,11 +1,13 @@
 import { useState, useCallback, useMemo, ReactNode } from 'react';
-import { FunnelComponent, createFunnelComponent } from './FunnelComponent';
+import { FunnelComponentDeprecated, createFunnelComponentDeprecated } from './FunnelComponentDeprecated';
 
 /**
+ * @deprecated 이 구현은 더 이상 사용되지 않습니다. @use-funnel/react-router-dom을 사용하세요.
+ *
  * History API 인터페이스
  * 단계 이동을 위한 메서드들을 제공합니다.
  */
-export interface FunnelHistory<TSteps extends Record<string, any>> {
+export interface FunnelHistoryDeprecated<TSteps extends Record<string, any>> {
   /**
    * 다음 단계로 이동하면서 데이터를 업데이트합니다.
    * @param step - 이동할 단계
@@ -33,9 +35,11 @@ export interface FunnelHistory<TSteps extends Record<string, any>> {
 }
 
 /**
- * useFunnel의 반환 상태
+ * @deprecated 이 구현은 더 이상 사용되지 않습니다. @use-funnel/react-router-dom을 사용하세요.
+ *
+ * useFunnelDeprecated의 반환 상태
  */
-export interface FunnelState<TSteps extends Record<string, any>> {
+export interface FunnelStateDeprecated<TSteps extends Record<string, any>> {
   /** 현재 활성화된 단계 */
   currentStep: keyof TSteps;
   /** 현재 단계의 context 데이터 */
@@ -49,9 +53,11 @@ export interface FunnelState<TSteps extends Record<string, any>> {
 }
 
 /**
- * useFunnel 옵션
+ * @deprecated 이 구현은 더 이상 사용되지 않습니다. @use-funnel/react-router-dom을 사용하세요.
+ *
+ * useFunnelDeprecated 옵션
  */
-export interface UseFunnelOptions<TSteps extends Record<string, any>> {
+export interface UseFunnelOptionsDeprecated<TSteps extends Record<string, any>> {
   /** 시작 단계 */
   initialStep: keyof TSteps;
   /** 초기 context 데이터 */
@@ -64,6 +70,8 @@ export interface UseFunnelOptions<TSteps extends Record<string, any>> {
 }
 
 /**
+ * @deprecated 이 구현은 더 이상 사용되지 않습니다. @use-funnel/react-router-dom을 사용하세요.
+ *
  * Funnel의 상태를 관리하는 커스텀 훅 (Compound Component 패턴)
  *
  * @param steps - 단계 목록 (as const로 선언 권장)
@@ -77,7 +85,7 @@ export interface UseFunnelOptions<TSteps extends Record<string, any>> {
  *   password: { email: string; password?: string };
  * };
  *
- * const [Funnel, state, history] = useFunnel<Steps>(
+ * const [Funnel, state, history] = useFunnelDeprecated<Steps>(
  *   ['email', 'password'] as const,
  *   { initialStep: 'email' }
  * );
@@ -102,10 +110,10 @@ export interface UseFunnelOptions<TSteps extends Record<string, any>> {
  * );
  * ```
  */
-export function useFunnel<TSteps extends Record<string, any>>(
+export function useFunnelDeprecated<TSteps extends Record<string, any>>(
   steps: ReadonlyArray<keyof TSteps>,
-  options: UseFunnelOptions<TSteps>
-): [FunnelComponent<TSteps>, FunnelState<TSteps>, FunnelHistory<TSteps>] {
+  options: UseFunnelOptionsDeprecated<TSteps>
+): [FunnelComponentDeprecated<TSteps>, FunnelStateDeprecated<TSteps>, FunnelHistoryDeprecated<TSteps>] {
   const { initialStep, initialContext = {} as TSteps[keyof TSteps], cleanupOnBack = true } = options;
 
   const [currentStep, setCurrentStep] = useState<keyof TSteps>(initialStep);
@@ -204,7 +212,7 @@ export function useFunnel<TSteps extends Record<string, any>>(
   /**
    * History API 객체
    */
-  const history = useMemo<FunnelHistory<TSteps>>(
+  const history = useMemo<FunnelHistoryDeprecated<TSteps>>(
     () => ({
       push,
       back,
@@ -217,7 +225,7 @@ export function useFunnel<TSteps extends Record<string, any>>(
   /**
    * 상태 객체
    */
-  const state = useMemo<FunnelState<TSteps>>(
+  const state = useMemo<FunnelStateDeprecated<TSteps>>(
     () => ({
       currentStep,
       context,
@@ -232,7 +240,7 @@ export function useFunnel<TSteps extends Record<string, any>>(
    * Funnel 컴포넌트 생성
    */
   const FunnelComp = useMemo(
-    () => createFunnelComponent<TSteps>(currentStep, context, history),
+    () => createFunnelComponentDeprecated<TSteps>(currentStep, context, history),
     [currentStep, context, history]
   );
 
@@ -240,21 +248,25 @@ export function useFunnel<TSteps extends Record<string, any>>(
 }
 
 /**
+ * @deprecated 이 구현은 더 이상 사용되지 않습니다. @use-funnel/react-router-dom을 사용하세요.
+ *
  * Funnel Step의 Render Props 타입
  */
-export interface FunnelStepRenderProps<TSteps extends Record<string, any>, TStep extends keyof TSteps> {
+export interface FunnelStepRenderPropsDeprecated<TSteps extends Record<string, any>, TStep extends keyof TSteps> {
   /** 현재 단계의 context */
   context: TSteps[TStep];
   /** History API */
-  history: FunnelHistory<TSteps>;
+  history: FunnelHistoryDeprecated<TSteps>;
 }
 
 /**
+ * @deprecated 이 구현은 더 이상 사용되지 않습니다. @use-funnel/react-router-dom을 사용하세요.
+ *
  * Funnel Step 컴포넌트의 Props
  */
-export interface FunnelStepProps<TSteps extends Record<string, any>, TStep extends keyof TSteps> {
+export interface FunnelStepPropsDeprecated<TSteps extends Record<string, any>, TStep extends keyof TSteps> {
   /** 단계 이름 */
   name: TStep;
   /** Render Props 함수 */
-  children: (props: FunnelStepRenderProps<TSteps, TStep>) => ReactNode;
+  children: (props: FunnelStepRenderPropsDeprecated<TSteps, TStep>) => ReactNode;
 }

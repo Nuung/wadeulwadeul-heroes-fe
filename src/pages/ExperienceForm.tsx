@@ -131,10 +131,10 @@ export default function ExperienceForm() {
   });
 
   // useRef를 사용하여 occupation, ingredients, steps, address 필드의 값을 관리
-  const occupationRef = useRef<HTMLInputElement>(null);
+  const occupationRef = useRef<HTMLTextAreaElement>(null);
   const ingredientsRef = useRef<HTMLTextAreaElement>(null);
   const stepsRef = useRef<HTMLTextAreaElement>(null);
-  const addressRef = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLTextAreaElement>(null);
 
   const [formData, setFormData] = useState({
     category: "",
@@ -333,7 +333,7 @@ export default function ExperienceForm() {
                       <VStack gap="$300">
                         <Text typography="heading3">어떤 일을 하시나요?</Text>
                         <Field.Root name="occupation">
-                          <TextInput
+                          <Textarea
                             ref={occupationRef}
                             placeholder={
                               CATEGORY_OPTIONS.find(
@@ -343,8 +343,10 @@ export default function ExperienceForm() {
                             defaultValue={formData.occupation}
                             className="large-input-placeholder"
                             size="xl"
+                            autoResize
                             style={{
-                              fontSize: "48px",
+                              fontSize: "38px",
+                              lineHeight: "48px",
                               border: "none",
                               fontWeight: "normal",
                               textAlign: "center",
@@ -528,14 +530,16 @@ export default function ExperienceForm() {
                           신청자와 만나는 장소가 어디인가요?
                         </Text>
                         <Field.Root name="location">
-                          <TextInput
+                          <Textarea
                             ref={addressRef}
                             defaultValue={formData.address}
                             placeholder="체험 장소를 입력하세요"
                             className="large-input-placeholder"
                             size="xl"
+                            autoResize
                             style={{
-                              fontSize: "48px",
+                              fontSize: "38px",
+                              lineHeight: "48px",
                               border: "none",
                               fontWeight: "normal",
                               textAlign: "center",
@@ -733,7 +737,7 @@ export default function ExperienceForm() {
                             alignItems="center"
                           >
                             <HStack gap="$100" alignItems="center">
-                              <Text typography="body1">₩</Text>
+                              <Text typography="heading1">₩</Text>
                               <NumberStepper
                                 value={formData.price}
                                 onChange={(value) =>

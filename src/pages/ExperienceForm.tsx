@@ -224,12 +224,12 @@ export default function ExperienceForm({
     price: number;
     template: ClassTemplateData | null;
   }>(initialFormData);
-  const [addressKeyword, setAddressKeyword] = useState("");
-  const [addressResults, setAddressResults] = useState<JusoAddress[]>([]);
-  const [addressSearchError, setAddressSearchError] = useState<string | null>(
-    null
-  );
-  const [isAddressSearching, setIsAddressSearching] = useState(false);
+  // const [addressKeyword, setAddressKeyword] = useState("");
+  // const [addressResults, setAddressResults] = useState<JusoAddress[]>([]);
+  // const [addressSearchError, setAddressSearchError] = useState<string | null>(
+  //   null
+  // );
+  // const [isAddressSearching, setIsAddressSearching] = useState(false);
 
   const occupationPlaceholder = useMemo(
     () => getOccupationTitle(formData.category),
@@ -285,53 +285,53 @@ export default function ExperienceForm({
     }
   }, [isOpen, navigate]);
 
-  const handleAddressSearch = async () => {
-    const sanitizedKeyword = sanitizeJusoKeyword(addressKeyword);
-    if (!sanitizedKeyword) {
-      setAddressSearchError("검색어를 입력해주세요.");
-      setAddressResults([]);
-      return;
-    }
+  // const handleAddressSearch = async () => {
+  //   const sanitizedKeyword = sanitizeJusoKeyword(addressKeyword);
+  //   if (!sanitizedKeyword) {
+  //     setAddressSearchError("검색어를 입력해주세요.");
+  //     setAddressResults([]);
+  //     return;
+  //   }
 
-    setIsAddressSearching(true);
-    setAddressSearchError(null);
-    try {
-      const results = await searchJusoAddress(sanitizedKeyword);
-      setAddressResults(results);
-      if (!results.length) {
-        setAddressSearchError(
-          "검색 결과가 없습니다. 다른 키워드를 입력해주세요."
-        );
-      }
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "주소 검색에 실패했습니다. 잠시 후 다시 시도해주세요.";
-      setAddressSearchError(message);
-      setAddressResults([]);
-    } finally {
-      setIsAddressSearching(false);
-    }
-  };
+  //   setIsAddressSearching(true);
+  //   setAddressSearchError(null);
+  //   try {
+  //     const results = await searchJusoAddress(sanitizedKeyword);
+  //     setAddressResults(results);
+  //     if (!results.length) {
+  //       setAddressSearchError(
+  //         "검색 결과가 없습니다. 다른 키워드를 입력해주세요."
+  //       );
+  //     }
+  //   } catch (error) {
+  //     const message =
+  //       error instanceof Error
+  //         ? error.message
+  //         : "주소 검색에 실패했습니다. 잠시 후 다시 시도해주세요.";
+  //     setAddressSearchError(message);
+  //     setAddressResults([]);
+  //   } finally {
+  //     setIsAddressSearching(false);
+  //   }
+  // };
 
-  const handleSelectAddress = (item: JusoAddress) => {
-    const composed = [
-      item.zipNo ? `[${item.zipNo}]` : "",
-      item.roadAddr || item.jibunAddr,
-    ]
-      .filter(Boolean)
-      .join(" ");
-    const nextAddress = composed || item.roadAddr || item.jibunAddr || "";
+  // const handleSelectAddress = (item: JusoAddress) => {
+  //   const composed = [
+  //     item.zipNo ? `[${item.zipNo}]` : "",
+  //     item.roadAddr || item.jibunAddr,
+  //   ]
+  //     .filter(Boolean)
+  //     .join(" ");
+  //   const nextAddress = composed || item.roadAddr || item.jibunAddr || "";
 
-    setFormData((prev) => ({ ...prev, address: nextAddress }));
-    setAddressKeyword(item.roadAddr || "");
-    setAddressResults([]);
-    // if (addressRef.current) {
-    //   addressRef.current.value = nextAddress;
-    //   addressRef.current.focus();
-    // }
-  };
+  //   setFormData((prev) => ({ ...prev, address: nextAddress }));
+  //   setAddressKeyword(item.roadAddr || "");
+  //   setAddressResults([]);
+  //   if (addressRef.current) {
+  //     addressRef.current.value = nextAddress;
+  //     addressRef.current.focus();
+  //   }
+  // };
 
   return (
     <Sheet.Root
@@ -798,7 +798,7 @@ export default function ExperienceForm({
                         <Text typography="heading3">
                           신청자와 만나는 장소가 어디인가요?
                         </Text>
-                        <Box className="addrlink-search-box">
+                        {/* <Box className="addrlink-search-box">
                           <div className="addrlink-search-form">
                             <TextInput
                               placeholder="도로명 / 건물명 / 지번으로 검색"
@@ -859,7 +859,7 @@ export default function ExperienceForm({
                               ))}
                             </div>
                           ) : null}
-                        </Box>
+                        </Box> */}
 
                         <FakeTextarea
                           ref={addressRef}

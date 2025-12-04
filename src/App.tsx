@@ -16,7 +16,7 @@ export default function App() {
   }, [location.pathname, navigate]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center">
+    <div className="min-h-screen flex flex-col items-center bg-[#FFF6F1]">
       <main className="flex-grow flex flex-col items-center justify-start py-6 w-full max-w-6xl">
         <Outlet />
       </main>

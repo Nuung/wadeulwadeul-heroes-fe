@@ -1,3 +1,7 @@
+.p-3.flex.flex-col.h-full {
+  background-color: white;
+}
+
 :root,
 [data-vapor-theme="light"] {
   --vapor-color-canvas: #f7f7f7;

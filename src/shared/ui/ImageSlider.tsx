@@ -10,7 +10,7 @@ import { ClassResponse } from "../api/queries";
 
 // 구분자별 이미지 매핑
 export const imageMap: Record<string, string> = {
-  돌담: "/images/stone.png",
+  돌담: "/images/stone.jpg",
   감귤: "/images/tangerine.jpg",
   해녀: "/images/haenyeo.jpg",
   요리: "/images/cooking.jpg",
@@ -46,6 +46,7 @@ export function ImageSlider({
   renderBack,
 }: ImageSliderProps) {
   const [activeFlipId, setActiveFlipId] = useState<string | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <Swiper
@@ -56,6 +57,7 @@ export function ImageSlider({
       centeredSlides={centeredSlides}
       loop={loop}
       className="w-full h-full"
+      onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
     >
       {slides.map((slide) => {
         return (
@@ -86,12 +88,12 @@ export function ImageSlider({
                 >
                   {/* 앞 */}
                   <div className="absolute inset-0 backface-hidden">
-                    <div className="p-6 flex flex-col h-full">
+                    <div className="p-3 flex flex-col h-full">
                       <div className="mb-3">
                         <img
                           src={imageMap[slide.category]}
                           alt={slide.job_description}
-                          className="w-[260px] h-[250px] object-cover"
+                          className="w-[290px] h-[250px] object-cover"
                         />
                         <VStack>
                           {slide.template && (
@@ -134,7 +136,7 @@ export function ImageSlider({
                     {/* 배경 이미지 위에 텍스트가 잘 보이도록 어두운 오버레이를 추가합니다. */}
                     <div className="absolute inset-0 bg-black/80" />
                     {/* 콘텐츠 */}
-                    <div className="relative h-full text-white flex flex-col justify-center gap-3 p-6">
+                    <div className="relative h-full text-white flex flex-col justify-center gap-3 p-5">
                       {renderBack ? (
                         renderBack(slide)
                       ) : (

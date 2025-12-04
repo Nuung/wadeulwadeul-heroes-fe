@@ -325,10 +325,10 @@ export default function ExperienceForm({
     setFormData((prev) => ({ ...prev, address: nextAddress }));
     setAddressKeyword(item.roadAddr || "");
     setAddressResults([]);
-    if (addressRef.current) {
-      addressRef.current.value = nextAddress;
-      addressRef.current.focus();
-    }
+    // if (addressRef.current) {
+    //   addressRef.current.value = nextAddress;
+    //   addressRef.current.focus();
+    // }
   };
 
   return (

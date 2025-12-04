@@ -1,8 +1,7 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
-  Field,
   TextInput,
   Textarea,
   Button,
@@ -31,6 +30,7 @@ import {
 } from "../shared/api/queries/experience-plan.hooks";
 import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
 import type { ClassTemplateData } from "../shared/api/queries/class.types";
+import { FakeTextarea, FakeTextareaRef } from "../shared/ui/FakeTextarea";
 import "@/shared/ui/addrlinkSample.css";
 
 // 10단계 Funnel 타입 정의
@@ -192,10 +192,24 @@ export default function ExperienceForm({
   });
 
   // useRef를 사용하여 occupation, ingredients, steps, address 필드의 값을 관리
-  const occupationRef = useRef<HTMLTextAreaElement>(null);
+  const occupationRef = useRef<FakeTextareaRef>(null);
   const ingredientsRef = useRef<HTMLTextAreaElement>(null);
   const stepsRef = useRef<HTMLTextAreaElement>(null);
-  const addressRef = useRef<HTMLTextAreaElement>(null);
+  const addressRef = useRef<FakeTextareaRef>(null);
+
+  // 초기 formData 값을 상수로 정의
+  const initialFormData = {
+    category: "",
+    experienceYears: 0,
+    occupation: "",
+    ingredients: "",
+    steps: "",
+    address: "",
+    duration: 60,
+    maxCapacity: 1,
+    price: 0,
+    template: null,
+  };
 
   const [formData, setFormData] = useState<{
     category: string;
@@ -208,18 +222,7 @@ export default function ExperienceForm({
     maxCapacity: number;
     price: number;
     template: ClassTemplateData | null;
-  }>({
-    category: "",
-    experienceYears: 0,
-    occupation: "",
-    ingredients: "",
-    steps: "",
-    address: "",
-    duration: 60,
-    maxCapacity: 1,
-    price: 0,
-    template: null,
-  });
+  }>(initialFormData);
   const [addressKeyword, setAddressKeyword] = useState("");
   const [addressResults, setAddressResults] = useState<JusoAddress[]>([]);
   const [addressSearchError, setAddressSearchError] = useState<string | null>(
@@ -245,7 +248,40 @@ export default function ExperienceForm({
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
+
+    // Sheet가 닫힐 때 모든 값 초기화
+    if (!open) {
+      // formData 초기화
+      setFormData(initialFormData);
+
+      // ref 초기화
+      occupationRef.current?.reset();
+      if (ingredientsRef.current) {
+        ingredientsRef.current.value = "";
+      }
+      if (stepsRef.current) {
+        stepsRef.current.value = "";
+      }
+      addressRef.current?.reset();
+
+      // funnel을 초기 단계로 리셋 (React Router의 navigate 사용)
+      navigate("?", { replace: true });
+    }
   };
+
+  // Sheet가 열릴 때 funnel을 초기 단계로 강제 리셋
+  useEffect(() => {
+    if (isOpen) {
+      // Sheet가 열릴 때마다 항상 funnel을 초기 step으로 설정
+      const initialFunnelState = JSON.stringify({
+        step: "category",
+        context: {},
+      });
+      navigate(`?experience-form=${encodeURIComponent(initialFunnelState)}`, {
+        replace: true,
+      });
+    }
+  }, [isOpen, navigate]);
 
   const handleAddressSearch = async () => {
     const sanitizedKeyword = sanitizeJusoKeyword(addressKeyword);
@@ -261,7 +297,9 @@ export default function ExperienceForm({
       const results = await searchJusoAddress(sanitizedKeyword);
       setAddressResults(results);
       if (!results.length) {
-        setAddressSearchError("검색 결과가 없습니다. 다른 키워드를 입력해주세요.");
+        setAddressSearchError(
+          "검색 결과가 없습니다. 다른 키워드를 입력해주세요."
+        );
       }
     } catch (error) {
       const message =
@@ -276,7 +314,10 @@ export default function ExperienceForm({
   };
 
   const handleSelectAddress = (item: JusoAddress) => {
-    const composed = [item.zipNo ? `[${item.zipNo}]` : "", item.roadAddr || item.jibunAddr]
+    const composed = [
+      item.zipNo ? `[${item.zipNo}]` : "",
+      item.roadAddr || item.jibunAddr,
+    ]
       .filter(Boolean)
       .join(" ");
     const nextAddress = composed || item.roadAddr || item.jibunAddr || "";
@@ -284,10 +325,10 @@ export default function ExperienceForm({
     setFormData((prev) => ({ ...prev, address: nextAddress }));
     setAddressKeyword(item.roadAddr || "");
     setAddressResults([]);
-    if (addressRef.current) {
-      addressRef.current.value = nextAddress;
-      addressRef.current.focus();
-    }
+    // if (addressRef.current) {
+    //   addressRef.current.value = nextAddress;
+    //   addressRef.current.focus();
+    // }
   };
 
   return (
@@ -367,16 +408,15 @@ export default function ExperienceForm({
                         <Text typography="heading3">
                           어떤 종류의 체험을 제공하시나요?
                         </Text>
-                        <Field.Root name="category">
-                          <CategoryCard
-                            name="category"
-                            options={CATEGORY_OPTIONS}
-                            value={formData.category}
-                            onChange={(value) =>
-                              setFormData({ ...formData, category: value })
-                            }
-                          />
-                        </Field.Root>
+
+                        <CategoryCard
+                          name="category"
+                          options={CATEGORY_OPTIONS}
+                          value={formData.category}
+                          onChange={(value) =>
+                            setFormData({ ...formData, category: value })
+                          }
+                        />
                       </VStack>
                     </Box>
                     <Box
@@ -416,29 +456,28 @@ export default function ExperienceForm({
                             CATEGORY_OPTIONS.find(
                               (opt) => opt.value === context.category
                             )?.label
-                          }{" "}
+                          }
                           분야에서 몇 년 동안 일하셨나요?
                         </Text>
-                        <Field.Root name="experienceYears">
-                          <Box
-                            display="flex"
-                            justifyContent="center"
-                            width="100%"
-                          >
-                            <NumberStepper
-                              value={formData.experienceYears}
-                              onChange={(value) =>
-                                setFormData({
-                                  ...formData,
-                                  experienceYears: value,
-                                })
-                              }
-                              min={0}
-                              max={50}
-                              showButtons={true}
-                            />
-                          </Box>
-                        </Field.Root>
+
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          width="100%"
+                        >
+                          <NumberStepper
+                            value={formData.experienceYears}
+                            onChange={(value) =>
+                              setFormData({
+                                ...formData,
+                                experienceYears: value,
+                              })
+                            }
+                            min={0}
+                            max={50}
+                            showButtons={true}
+                          />
+                        </Box>
                       </VStack>
                     </Box>
                     <Box
@@ -495,23 +534,30 @@ export default function ExperienceForm({
                       ) : (
                         <VStack gap="$300">
                           <Text typography="heading3">어떤 일을 하시나요?</Text>
-                          <Field.Root name="occupation">
-                            <Textarea
-                              key={formData.category}
-                              ref={occupationRef}
-                              defaultValue={occupationPlaceholder}
-                              className="large-input-placeholder"
-                              size="xl"
-                              autoResize
-                              style={{
-                                fontSize: "38px",
-                                lineHeight: "48px",
-                                border: "none",
-                                fontWeight: "bold",
-                                textAlign: "center",
-                              }}
-                            />
-                          </Field.Root>
+
+                          <FakeTextarea
+                            ref={occupationRef}
+                            placeholder={
+                              CATEGORY_OPTIONS.find(
+                                (opt) => opt.value === formData.category
+                              )?.label + " 전문가"
+                            }
+                            defaultValue={
+                              CATEGORY_OPTIONS.find(
+                                (opt) => opt.value === formData.category
+                              )?.label + " 전문가"
+                            }
+                            className="large-input-placeholder"
+                            size="xl"
+                            autoResize
+                            style={{
+                              fontSize: "38px",
+                              lineHeight: "48px",
+                              border: "none",
+                              fontWeight: "bold",
+                              textAlign: "center",
+                            }}
+                          />
                         </VStack>
                       )}
                     </Box>
@@ -597,22 +643,21 @@ export default function ExperienceForm({
                           <Text typography="heading3">
                             준비해야 하는 재료는 무엇인가요?
                           </Text>
-                          <Field.Root name="ingredients">
-                            <Field.Label>재료</Field.Label>
-                            <Textarea
-                              ref={ingredientsRef}
-                              placeholder="예: 돌, 시멘트, 흙손 등"
-                              defaultValue={formData.ingredients}
-                              autoResize
-                              size="xl"
-                              style={{
-                                fontSize: "32px",
-                                lineHeight: "44px",
-                                minHeight: "300px",
-                                fontWeight: "bold",
-                              }}
-                            />
-                          </Field.Root>
+
+                          <Textarea
+                            ref={ingredientsRef}
+                            placeholder="예: 돌, 시멘트, 흙손 등"
+                            defaultValue={formData.ingredients}
+                            autoResize
+                            size="xl"
+                            style={{
+                              fontSize: "32px",
+                              lineHeight: "44px",
+                              minHeight: "300px",
+                              maxHeight: "630px",
+                              fontWeight: "bold",
+                            }}
+                          />
                         </VStack>
                       )}
                     </Box>
@@ -693,22 +738,21 @@ export default function ExperienceForm({
                         <Text typography="heading3">
                           단계별로 하려면 어떻게 하면 되나요?
                         </Text>
-                        <Field.Root name="steps">
-                          <Field.Label>진행 단계</Field.Label>
-                          <Textarea
-                            ref={stepsRef}
-                            placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
-                            defaultValue={formData.steps}
-                            autoResize
-                            size="xl"
-                            style={{
-                              fontSize: "32px",
-                              lineHeight: "44px",
-                              minHeight: "300px",
-                              fontWeight: "bold",
-                            }}
-                          />
-                        </Field.Root>
+
+                        <Textarea
+                          ref={stepsRef}
+                          placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
+                          defaultValue={formData.steps}
+                          autoResize
+                          size="xl"
+                          style={{
+                            fontSize: "32px",
+                            lineHeight: "44px",
+                            minHeight: "300px",
+                            maxHeight: "630px",
+                            fontWeight: "bold",
+                          }}
+                        />
                       </VStack>
                     </Box>
                     <Box
@@ -762,7 +806,9 @@ export default function ExperienceForm({
                             <TextInput
                               placeholder="도로명 / 건물명 / 지번으로 검색"
                               value={addressKeyword}
-                              onChange={(event) => setAddressKeyword(event.target.value)}
+                              onChange={(event) =>
+                                setAddressKeyword(event.target.value)
+                              }
                               onKeyDown={(event) => {
                                 if (event.key === "Enter") {
                                   event.preventDefault();
@@ -783,7 +829,7 @@ export default function ExperienceForm({
                             </Button>
                           </div>
                           {addressSearchError ? (
-                            <Text size="sm" style={{ color: "#e11d48" }}>
+                            <Text style={{ color: "#e11d48" }}>
                               {addressSearchError}
                             </Text>
                           ) : null}
@@ -791,42 +837,48 @@ export default function ExperienceForm({
                             <div className="addrlink-result-list">
                               {addressResults.map((item) => (
                                 <button
-                                  key={`${item.zipNo}-${item.roadAddr}-${item.bdMgtSn ?? ""}`}
+                                  key={`${item.zipNo}-${item.roadAddr}-${
+                                    item.bdMgtSn ?? ""
+                                  }`}
                                   type="button"
                                   className="addrlink-result-item"
                                   onClick={() => handleSelectAddress(item)}
                                 >
-                                  <span className="addrlink-zip">[{item.zipNo}]</span>
-                                  <span className="addrlink-road">{item.roadAddr}</span>
-                                  <span className="addrlink-jibun">{item.jibunAddr}</span>
+                                  <span className="addrlink-zip">
+                                    [{item.zipNo}]
+                                  </span>
+                                  <span className="addrlink-road">
+                                    {item.roadAddr}
+                                  </span>
+                                  <span className="addrlink-jibun">
+                                    {item.jibunAddr}
+                                  </span>
                                   {item.bdNm ? (
-                                    <span className="addrlink-extra">{item.bdNm}</span>
+                                    <span className="addrlink-extra">
+                                      {item.bdNm}
+                                    </span>
                                   ) : null}
                                 </button>
                               ))}
                             </div>
                           ) : null}
                         </Box>
-                        <Field.Root name="location">
-                          <Textarea
-                            ref={addressRef}
-                            defaultValue={formData.address}
-                            onBlur={(event) =>
-                              setFormData({ ...formData, address: event.target.value })
-                            }
-                            placeholder="체험 장소를 입력하세요"
-                            className="large-input-placeholder"
-                            size="xl"
-                            autoResize
-                            style={{
-                              fontSize: "38px",
-                              lineHeight: "48px",
-                              border: "none",
-                              fontWeight: "bold",
-                              textAlign: "center",
-                            }}
-                          />
-                        </Field.Root>
+
+                        <FakeTextarea
+                          ref={addressRef}
+                          defaultValue="체험 장소를 입력하세요"
+                          placeholder="체험 장소를 입력하세요"
+                          className="large-input-placeholder"
+                          size="xl"
+                          autoResize
+                          style={{
+                            fontSize: "38px",
+                            lineHeight: "48px",
+                            border: "none",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                          }}
+                        />
                       </VStack>
                     </Box>
                     <Box
@@ -852,7 +904,9 @@ export default function ExperienceForm({
                           size="xl"
                           onClick={() => {
                             const addressValue =
-                              addressRef.current?.value ?? formData.address ?? "";
+                              addressRef.current?.value ??
+                              formData.address ??
+                              "";
                             const address = addressValue.trim();
                             setFormData({ ...formData, address });
                             history.push("duration", { address });
@@ -875,26 +929,25 @@ export default function ExperienceForm({
                     >
                       <VStack gap="$300">
                         <Text typography="heading3">소요 시간 설정</Text>
-                        <Field.Root name="duration">
-                          <VStack gap="$200" alignItems="center">
-                            <Box
-                              display="flex"
-                              justifyContent="center"
-                              width="100%"
-                            >
-                              <NumberStepper
-                                value={formData.duration}
-                                onChange={(value) =>
-                                  setFormData({ ...formData, duration: value })
-                                }
-                                min={30}
-                                max={480}
-                                showButtons={true}
-                              />
-                            </Box>
-                            <Text typography="body1">분</Text>
-                          </VStack>
-                        </Field.Root>
+
+                        <VStack gap="$200" alignItems="center">
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            width="100%"
+                          >
+                            <NumberStepper
+                              value={formData.duration}
+                              onChange={(value) =>
+                                setFormData({ ...formData, duration: value })
+                              }
+                              min={30}
+                              max={480}
+                              showButtons={true}
+                            />
+                          </Box>
+                          <Text typography="body1">분</Text>
+                        </VStack>
                       </VStack>
                     </Box>
                     <Box
@@ -949,23 +1002,22 @@ export default function ExperienceForm({
                     >
                       <VStack gap="$300">
                         <Text typography="heading3">최대 인원 추가</Text>
-                        <Field.Root name="maxCapacity">
-                          <Box
-                            display="flex"
-                            justifyContent="center"
-                            width="100%"
-                          >
-                            <NumberStepper
-                              value={formData.maxCapacity}
-                              onChange={(value) =>
-                                setFormData({ ...formData, maxCapacity: value })
-                              }
-                              min={1}
-                              max={20}
-                              showButtons={true}
-                            />
-                          </Box>
-                        </Field.Root>
+
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          width="100%"
+                        >
+                          <NumberStepper
+                            value={formData.maxCapacity}
+                            onChange={(value) =>
+                              setFormData({ ...formData, maxCapacity: value })
+                            }
+                            min={1}
+                            max={20}
+                            showButtons={true}
+                          />
+                        </Box>
                       </VStack>
                     </Box>
                     <Box
@@ -1028,23 +1080,22 @@ export default function ExperienceForm({
                       ) : (
                         <VStack gap="$300">
                           <Text typography="heading3">게스트 1인당 요금</Text>
-                          <Field.Root name="price">
-                            <Box
-                              display="flex"
-                              justifyContent="center"
-                              width="100%"
-                            >
-                              <NumberStepper
-                                value={formData.price}
-                                showButtons={false}
-                                onChange={(value) =>
-                                  setFormData({ ...formData, price: value })
-                                }
-                                min={5000}
-                                max={1000000}
-                              />
-                            </Box>
-                          </Field.Root>
+
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            width="100%"
+                          >
+                            <NumberStepper
+                              value={formData.price}
+                              showButtons={false}
+                              onChange={(value) =>
+                                setFormData({ ...formData, price: value })
+                              }
+                              min={5000}
+                              max={1000000}
+                            />
+                          </Box>
                         </VStack>
                       )}
                     </Box>

@@ -30,7 +30,7 @@ import {
 } from "../shared/api/queries/experience-plan.hooks";
 import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
 import type { ClassTemplateData } from "../shared/api/queries/class.types";
-import { FakeTextarea, FakeTextareaRef } from "../shared/ui/FakeTextarea";
+// import { FakeTextarea, FakeTextareaRef } from "../shared/ui/FakeTextarea";
 import "@/shared/ui/addrlinkSample.css";
 import { useSnackbar } from "notistack";
 
@@ -193,10 +193,10 @@ export default function ExperienceForm({
   });
 
   // useRef를 사용하여 occupation, ingredients, steps, address 필드의 값을 관리
-  const occupationRef = useRef<FakeTextareaRef>(null);
+  const occupationRef = useRef<HTMLTextAreaElement>(null);
   const ingredientsRef = useRef<HTMLTextAreaElement>(null);
   const stepsRef = useRef<HTMLTextAreaElement>(null);
-  const addressRef = useRef<FakeTextareaRef>(null);
+  const addressRef = useRef<HTMLTextAreaElement>(null);
 
   // 초기 formData 값을 상수로 정의
   const initialFormData = {
@@ -257,14 +257,20 @@ export default function ExperienceForm({
       setFormData(initialFormData);
 
       // ref 초기화
-      occupationRef.current?.reset();
+      if (occupationRef.current) {
+        occupationRef.current.value = "";
+      }
+
+      if (addressRef.current) {
+        addressRef.current.value = "";
+      }
+
       if (ingredientsRef.current) {
         ingredientsRef.current.value = "";
       }
       if (stepsRef.current) {
         stepsRef.current.value = "";
       }
-      addressRef.current?.reset();
 
       // funnel을 초기 단계로 리셋 (React Router의 navigate 사용)
       navigate("?", { replace: true });
@@ -537,19 +543,15 @@ export default function ExperienceForm({
                         <VStack gap="$300">
                           <Text typography="heading3">어떤 일을 하시나요?</Text>
 
-                          <FakeTextarea
+                          <Textarea
                             ref={occupationRef}
                             placeholder={occupationPlaceholder}
                             defaultValue={occupationPlaceholder}
-                            className="large-input-placeholder"
-                            size="xl"
                             autoResize
+                            size="lg"
                             style={{
-                              fontSize: "38px",
-                              lineHeight: "48px",
-                              border: "none",
-                              fontWeight: "bold",
-                              textAlign: "center",
+                              fontSize: "18px",
+                              lineHeight: "24px",
                             }}
                           />
                         </VStack>
@@ -645,14 +647,8 @@ export default function ExperienceForm({
                             placeholder="예: 돌, 시멘트, 흙손 등"
                             defaultValue={formData.ingredients}
                             autoResize
-                            size="xl"
-                            style={{
-                              fontSize: "32px",
-                              lineHeight: "44px",
-                              minHeight: "300px",
-                              maxHeight: "630px",
-                              fontWeight: "bold",
-                            }}
+                            size="lg"
+                            style={{ fontSize: "18px", lineHeight: "24px" }}
                           />
                         </VStack>
                       )}
@@ -741,14 +737,8 @@ export default function ExperienceForm({
                           placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
                           defaultValue={formData.steps}
                           autoResize
-                          size="xl"
-                          style={{
-                            fontSize: "32px",
-                            lineHeight: "44px",
-                            minHeight: "300px",
-                            maxHeight: "630px",
-                            fontWeight: "bold",
-                          }}
+                          size="lg"
+                          style={{ fontSize: "18px", lineHeight: "24px" }}
                         />
                       </VStack>
                     </Box>
@@ -861,20 +851,13 @@ export default function ExperienceForm({
                           ) : null}
                         </Box> */}
 
-                        <FakeTextarea
+                        <Textarea
                           ref={addressRef}
                           defaultValue="체험 장소를 입력하세요"
                           placeholder="체험 장소를 입력하세요"
-                          className="large-input-placeholder"
-                          size="xl"
+                          size="lg"
+                          style={{ fontSize: "18px", lineHeight: "24px" }}
                           autoResize
-                          style={{
-                            fontSize: "38px",
-                            lineHeight: "48px",
-                            border: "none",
-                            fontWeight: "bold",
-                            textAlign: "center",
-                          }}
                         />
                       </VStack>
                     </Box>

@@ -14,9 +14,9 @@ import type {
 /**
  * 클래스 목록 조회
  */
-export const getClasses = async (params?: ClassListParams) => {
+export const getClasses = (params?: ClassListParams) => {
   return apiGet<ClassListResponse, ClassListParams>({
-    endpoint: "/class",
+    endpoint: "/api/v1/classes/",
     params,
   });
 };

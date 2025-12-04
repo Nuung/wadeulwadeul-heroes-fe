@@ -24,14 +24,9 @@ export interface UpdateClassDto {
 }
 
 export interface ClassListParams {
-  page?: number;
+  skip?: number;
   limit?: number;
   search?: string;
 }
 
-export interface ClassListResponse {
-  data: Class[];
-  total: number;
-  page: number;
-  limit: number;
-}
+export type ClassListResponse = Class[];

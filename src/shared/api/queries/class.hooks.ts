@@ -40,10 +40,7 @@ export const classKeys = {
  */
 export const useClassesQuery = (
   params?: ClassListParams,
-  options?: Omit<
-    UseQueryOptions<ClassListResponse, Error>,
-    "queryKey" | "queryFn"
-  >
+  options?: Omit<UseQueryOptions<Class[], Error>, "queryKey" | "queryFn">
 ) => {
   return useQuery({
     queryKey: classKeys.list(params),

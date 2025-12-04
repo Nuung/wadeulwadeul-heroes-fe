@@ -3,14 +3,16 @@ import { CreatorClassList } from "./CreatorClassList";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import ExperienceForm from "../ExperienceForm";
+import { NavMenu } from "../user/NavMenu";
 
 export function CreatorMain() {
   const [isExperience, setIsExperience] = useState(false);
 
   return (
     <>
+      <NavMenu />
       <VStack>
-        <Box className="w-[327px] h-[465px]">
+        <Box className="w-[327px] h-[425px] mt-2">
           <img
             src="/images/creator_main.png" // 프로젝트 public 폴더 또는 URL
             alt="삼춘한수 로고"

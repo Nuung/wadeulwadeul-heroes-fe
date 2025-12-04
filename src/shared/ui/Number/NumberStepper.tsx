@@ -53,12 +53,11 @@ export function NumberStepper({
   if (!showButtons) {
     return (
       <TextInput
-        type="number"
+        type="text"
+        inputMode="numeric"
         value={count.toString()}
         onChange={handleInputChange}
         disabled={disabled}
-        min={min}
-        max={max}
       />
     );
   }

@@ -1,5 +1,16 @@
-import { VStack } from '@vapor-ui/core';
-import { HeroSwiper, HeroSlide } from '../shared/ui/HeroSwiper';
+import { VStack, Box, Text } from '@vapor-ui/core';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+
+interface HeroSlide {
+  id: string;
+  image: string;
+  title: string;
+  subtitle: string;
+  discount: string;
+}
 
 const HERO_SLIDES: HeroSlide[] = [
   {
@@ -29,7 +40,59 @@ export default function Home() {
   return (
     <div className="v-min-h-screen v-bg-canvas-100 v-p-6">
       <VStack gap="$400" className="v-max-w-7xl v-mx-auto">
-        <HeroSwiper slides={HERO_SLIDES} autoplay autoplayDelay={4000} />
+        <Swiper
+          modules={[Autoplay, Pagination]}
+          spaceBetween={20}
+          slidesPerView={1}
+          autoplay={{ delay: 4000, disableOnInteraction: false }}
+          pagination={{ clickable: true }}
+          style={{ width: '100%', borderRadius: '16px' }}
+        >
+          {HERO_SLIDES.map((slide) => (
+            <SwiperSlide key={slide.id}>
+              <Box
+                borderRadius="$300"
+                overflow="hidden"
+                style={{
+                  position: 'relative',
+                  height: '400px',
+                }}
+              >
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                />
+                <Box
+                  padding="$400"
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+                  }}
+                >
+                  <VStack gap="$100">
+                    <Text typography="heading2" foreground="white">
+                      {slide.title}
+                    </Text>
+                    <Text typography="body1" foreground="white">
+                      {slide.subtitle}
+                    </Text>
+                    <Text typography="body2" foreground="primary-100">
+                      {slide.discount}
+                    </Text>
+                  </VStack>
+                </Box>
+              </Box>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </VStack>
     </div>
   );

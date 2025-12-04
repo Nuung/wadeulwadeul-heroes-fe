@@ -14,7 +14,7 @@ interface SlideItem {
 }
 
 interface ImageSliderProps {
-  slides: SlideItem[];
+  slides: readonly SlideItem[];
   spaceBetween?: number;
   slidesPerView?: number;
   navigation?: boolean;

@@ -5,38 +5,48 @@ import { useFunnel } from '@use-funnel/react-router-dom';
 import { NumberStepper } from '../shared/ui/Number/NumberStepper';
 import { CategoryCard, CategoryOption } from '../shared/ui/CategoryCard';
 
-// 8단계 Funnel 타입 정의
+// 10단계 Funnel 타입 정의
 type ExperienceFormSteps = {
   category: { category?: string };
   experience: { category: string; experienceYears?: number };
   occupation: { category: string; experienceYears: number; occupation?: string };
+  ingredients: {
+    category: string;
+    experienceYears: number;
+    occupation: string;
+    ingredients?: string;
+  };
+  steps: {
+    category: string;
+    experienceYears: number;
+    occupation: string;
+    ingredients: string;
+    steps?: string;
+  };
   location: {
     category: string;
     experienceYears: number;
     occupation: string;
+    ingredients: string;
+    steps: string;
     address?: string;
-  };
-  name: {
-    category: string;
-    experienceYears: number;
-    occupation: string;
-    address: string;
-    name?: string;
   };
   duration: {
     category: string;
     experienceYears: number;
     occupation: string;
+    ingredients: string;
+    steps: string;
     address: string;
-    name: string;
     duration?: number;
   };
   capacity: {
     category: string;
     experienceYears: number;
     occupation: string;
+    ingredients: string;
+    steps: string;
     address: string;
-    name: string;
     duration: number;
     maxCapacity?: number;
   };
@@ -44,11 +54,23 @@ type ExperienceFormSteps = {
     category: string;
     experienceYears: number;
     occupation: string;
+    ingredients: string;
+    steps: string;
     address: string;
-    name: string;
     duration: number;
     maxCapacity: number;
     price?: number;
+  };
+  recommendation: {
+    category: string;
+    experienceYears: number;
+    occupation: string;
+    ingredients: string;
+    steps: string;
+    address: string;
+    duration: number;
+    maxCapacity: number;
+    price: number;
   };
 };
 
@@ -87,17 +109,19 @@ export default function ExperienceForm() {
     },
   });
 
-  // useRef를 사용하여 occupation, address, name 필드의 값을 관리
+  // useRef를 사용하여 occupation, ingredients, steps, address 필드의 값을 관리
   const occupationRef = useRef<HTMLInputElement>(null);
+  const ingredientsRef = useRef<HTMLTextAreaElement>(null);
+  const stepsRef = useRef<HTMLTextAreaElement>(null);
   const addressRef = useRef<HTMLInputElement>(null);
-  const nameRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     category: '',
     experienceYears: 0,
     occupation: '',
+    ingredients: '',
+    steps: '',
     address: '',
-    name: '',
     duration: 60,
     maxCapacity: 1,
     price: 0,
@@ -204,7 +228,67 @@ export default function ExperienceForm() {
                         onClick={() => {
                           const occupation = occupationRef.current?.value || '';
                           setFormData({ ...formData, occupation });
-                          history.push('location', { occupation });
+                          history.push('ingredients', { occupation });
+                        }}
+                      >
+                        다음
+                      </Button>
+                    </HStack>
+                  </VStack>
+                )}
+                ingredients={({ history }) => (
+                  <VStack gap="$300">
+                    <Text typography="heading3">준비해야 하는 재료는 무엇인가요?</Text>
+                    <Field.Root name="ingredients">
+                      <Field.Label>재료</Field.Label>
+                      <textarea
+                        ref={ingredientsRef}
+                        placeholder="예: 돌, 시멘트, 흙손 등"
+                        defaultValue={formData.ingredients}
+                        rows={5}
+                        className="v-w-full v-p-3 v-border v-border-neutral-300 v-rounded-md v-resize-y"
+                      />
+                    </Field.Root>
+                    <HStack gap="$150">
+                      <Button type="button" variant="outline" onClick={() => history.back()}>
+                        이전
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          const ingredients = ingredientsRef.current?.value || '';
+                          setFormData({ ...formData, ingredients });
+                          history.push('steps', { ingredients });
+                        }}
+                      >
+                        다음
+                      </Button>
+                    </HStack>
+                  </VStack>
+                )}
+                steps={({ history }) => (
+                  <VStack gap="$300">
+                    <Text typography="heading3">단계별로 하려면 어떻게 하면 되나요?</Text>
+                    <Field.Root name="steps">
+                      <Field.Label>진행 단계</Field.Label>
+                      <textarea
+                        ref={stepsRef}
+                        placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
+                        defaultValue={formData.steps}
+                        rows={7}
+                        className="v-w-full v-p-3 v-border v-border-neutral-300 v-rounded-md v-resize-y"
+                      />
+                    </Field.Root>
+                    <HStack gap="$150">
+                      <Button type="button" variant="outline" onClick={() => history.back()}>
+                        이전
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          const steps = stepsRef.current?.value || '';
+                          setFormData({ ...formData, steps });
+                          history.push('location', { steps });
                         }}
                       >
                         다음
@@ -232,35 +316,7 @@ export default function ExperienceForm() {
                         onClick={() => {
                           const address = addressRef.current?.value || '';
                           setFormData({ ...formData, address });
-                          history.push('name', { address });
-                        }}
-                      >
-                        다음
-                      </Button>
-                    </HStack>
-                  </VStack>
-                )}
-                name={({ history }) => (
-                  <VStack gap="$300">
-                    <Text typography="heading3">체험 이름 작성하기</Text>
-                    <Field.Root name="experienceName">
-                      <Field.Label>체험 이름</Field.Label>
-                      <TextInput
-                        ref={nameRef}
-                        placeholder="제주도 장인과 함께 돌담 쌓아보기"
-                        defaultValue={formData.name}
-                      />
-                    </Field.Root>
-                    <HStack gap="$150">
-                      <Button type="button" variant="outline" onClick={() => history.back()}>
-                        이전
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          const name = nameRef.current?.value || '';
-                          setFormData({ ...formData, name });
-                          history.push('duration', { name });
+                          history.push('duration', { address });
                         }}
                       >
                         다음
@@ -339,6 +395,31 @@ export default function ExperienceForm() {
                         />
                       </HStack>
                     </Field.Root>
+                    <HStack gap="$150">
+                      <Button type="button" variant="outline" onClick={() => history.back()}>
+                        이전
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={() => history.push('recommendation', { price: formData.price })}
+                      >
+                        다음
+                      </Button>
+                    </HStack>
+                  </VStack>
+                )}
+                recommendation={({ history }) => (
+                  <VStack gap="$300">
+                    <Text typography="heading3">추천 수업 템플릿</Text>
+                    <Box
+                      padding="$400"
+                      backgroundColor="$canvas-100"
+                      borderRadius="$300"
+                    >
+                      <Text typography="body1">
+                        입력하신 정보를 바탕으로 체험이 준비되었습니다!
+                      </Text>
+                    </Box>
                     <HStack gap="$150">
                       <Button type="button" variant="outline" onClick={() => history.back()}>
                         이전

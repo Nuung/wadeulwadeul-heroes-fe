@@ -3,7 +3,6 @@ import { Form, Field, TextInput, Button, VStack, HStack, Text, Box } from '@vapo
 import { useFunnel } from '../shared/ui/Funnel';
 import { NumberStepper } from '../shared/ui/Number/NumberStepper';
 import { CategoryCard, CategoryOption } from '../shared/ui/CategoryCard';
-import { AddressSearch } from '../shared/ui/AddressSearch';
 
 // 9단계 Funnel 타입 정의
 type ExperienceFormSteps = {
@@ -16,7 +15,6 @@ type ExperienceFormSteps = {
     experienceYears: number;
     occupation: string;
     address?: string;
-    coordinates?: { lat: number; lng: number };
   };
   name: {
     category: string;
@@ -91,7 +89,6 @@ export default function ExperienceForm() {
     experienceYears: 0,
     occupation: '',
     address: '',
-    coordinates: undefined as { lat: number; lng: number } | undefined,
     name: '',
     duration: 60,
     maxCapacity: 1,
@@ -226,12 +223,10 @@ export default function ExperienceForm() {
                     <Text typography="heading1">신청자와 만나는 장소가 어디인가요?</Text>
                     <Field.Root name="location">
                       <Field.Label>체험 장소</Field.Label>
-                      <AddressSearch
+                      <TextInput
                         value={formData.address}
-                        onChange={(address, coordinates) =>
-                          setFormData({ ...formData, address, coordinates })
-                        }
-                        placeholder="주소를 검색하세요"
+                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                        placeholder="체험 장소를 입력하세요"
                       />
                     </Field.Root>
                     <HStack gap="$150">
@@ -241,7 +236,7 @@ export default function ExperienceForm() {
                       <Button
                         type="button"
                         onClick={() => history.push('name', { address: formData.address })}
-                        disabled={!formData.address}
+                        disabled={!formData.address.trim()}
                       >
                         다음
                       </Button>

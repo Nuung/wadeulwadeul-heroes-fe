@@ -2,7 +2,6 @@ import { useMemo, useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
-  Field,
   TextInput,
   Textarea,
   Button,
@@ -409,16 +408,15 @@ export default function ExperienceForm({
                         <Text typography="heading3">
                           어떤 종류의 체험을 제공하시나요?
                         </Text>
-                        <Field.Root name="category">
-                          <CategoryCard
-                            name="category"
-                            options={CATEGORY_OPTIONS}
-                            value={formData.category}
-                            onChange={(value) =>
-                              setFormData({ ...formData, category: value })
-                            }
-                          />
-                        </Field.Root>
+
+                        <CategoryCard
+                          name="category"
+                          options={CATEGORY_OPTIONS}
+                          value={formData.category}
+                          onChange={(value) =>
+                            setFormData({ ...formData, category: value })
+                          }
+                        />
                       </VStack>
                     </Box>
                     <Box
@@ -458,29 +456,28 @@ export default function ExperienceForm({
                             CATEGORY_OPTIONS.find(
                               (opt) => opt.value === context.category
                             )?.label
-                          }{" "}
+                          }
                           분야에서 몇 년 동안 일하셨나요?
                         </Text>
-                        <Field.Root name="experienceYears">
-                          <Box
-                            display="flex"
-                            justifyContent="center"
-                            width="100%"
-                          >
-                            <NumberStepper
-                              value={formData.experienceYears}
-                              onChange={(value) =>
-                                setFormData({
-                                  ...formData,
-                                  experienceYears: value,
-                                })
-                              }
-                              min={0}
-                              max={50}
-                              showButtons={true}
-                            />
-                          </Box>
-                        </Field.Root>
+
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          width="100%"
+                        >
+                          <NumberStepper
+                            value={formData.experienceYears}
+                            onChange={(value) =>
+                              setFormData({
+                                ...formData,
+                                experienceYears: value,
+                              })
+                            }
+                            min={0}
+                            max={50}
+                            showButtons={true}
+                          />
+                        </Box>
                       </VStack>
                     </Box>
                     <Box
@@ -537,31 +534,30 @@ export default function ExperienceForm({
                       ) : (
                         <VStack gap="$300">
                           <Text typography="heading3">어떤 일을 하시나요?</Text>
-                          <Field.Root name="occupation">
-                            <FakeTextarea
-                              ref={occupationRef}
-                              placeholder={
-                                CATEGORY_OPTIONS.find(
-                                  (opt) => opt.value === formData.category
-                                )?.label + " 전문가"
-                              }
-                              defaultValue={
-                                CATEGORY_OPTIONS.find(
-                                  (opt) => opt.value === formData.category
-                                )?.label + " 전문가"
-                              }
-                              className="large-input-placeholder"
-                              size="xl"
-                              autoResize
-                              style={{
-                                fontSize: "38px",
-                                lineHeight: "48px",
-                                border: "none",
-                                fontWeight: "bold",
-                                textAlign: "center",
-                              }}
-                            />
-                          </Field.Root>
+
+                          <FakeTextarea
+                            ref={occupationRef}
+                            placeholder={
+                              CATEGORY_OPTIONS.find(
+                                (opt) => opt.value === formData.category
+                              )?.label + " 전문가"
+                            }
+                            defaultValue={
+                              CATEGORY_OPTIONS.find(
+                                (opt) => opt.value === formData.category
+                              )?.label + " 전문가"
+                            }
+                            className="large-input-placeholder"
+                            size="xl"
+                            autoResize
+                            style={{
+                              fontSize: "38px",
+                              lineHeight: "48px",
+                              border: "none",
+                              fontWeight: "bold",
+                              textAlign: "center",
+                            }}
+                          />
                         </VStack>
                       )}
                     </Box>
@@ -647,22 +643,21 @@ export default function ExperienceForm({
                           <Text typography="heading3">
                             준비해야 하는 재료는 무엇인가요?
                           </Text>
-                          <Field.Root name="ingredients">
-                            <Field.Label>재료</Field.Label>
-                            <Textarea
-                              ref={ingredientsRef}
-                              placeholder="예: 돌, 시멘트, 흙손 등"
-                              defaultValue={formData.ingredients}
-                              autoResize
-                              size="xl"
-                              style={{
-                                fontSize: "32px",
-                                lineHeight: "44px",
-                                minHeight: "300px",
-                                fontWeight: "bold",
-                              }}
-                            />
-                          </Field.Root>
+
+                          <Textarea
+                            ref={ingredientsRef}
+                            placeholder="예: 돌, 시멘트, 흙손 등"
+                            defaultValue={formData.ingredients}
+                            autoResize
+                            size="xl"
+                            style={{
+                              fontSize: "32px",
+                              lineHeight: "44px",
+                              minHeight: "300px",
+                              maxHeight: "630px",
+                              fontWeight: "bold",
+                            }}
+                          />
                         </VStack>
                       )}
                     </Box>
@@ -743,22 +738,21 @@ export default function ExperienceForm({
                         <Text typography="heading3">
                           단계별로 하려면 어떻게 하면 되나요?
                         </Text>
-                        <Field.Root name="steps">
-                          <Field.Label>진행 단계</Field.Label>
-                          <Textarea
-                            ref={stepsRef}
-                            placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
-                            defaultValue={formData.steps}
-                            autoResize
-                            size="xl"
-                            style={{
-                              fontSize: "32px",
-                              lineHeight: "44px",
-                              minHeight: "300px",
-                              fontWeight: "bold",
-                            }}
-                          />
-                        </Field.Root>
+
+                        <Textarea
+                          ref={stepsRef}
+                          placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
+                          defaultValue={formData.steps}
+                          autoResize
+                          size="xl"
+                          style={{
+                            fontSize: "32px",
+                            lineHeight: "44px",
+                            minHeight: "300px",
+                            maxHeight: "630px",
+                            fontWeight: "bold",
+                          }}
+                        />
                       </VStack>
                     </Box>
                     <Box
@@ -869,23 +863,22 @@ export default function ExperienceForm({
                             </div>
                           ) : null}
                         </Box>
-                        <Field.Root name="location">
-                          <FakeTextarea
-                            ref={addressRef}
-                            defaultValue="체험 장소를 입력하세요"
-                            placeholder="체험 장소를 입력하세요"
-                            className="large-input-placeholder"
-                            size="xl"
-                            autoResize
-                            style={{
-                              fontSize: "38px",
-                              lineHeight: "48px",
-                              border: "none",
-                              fontWeight: "bold",
-                              textAlign: "center",
-                            }}
-                          />
-                        </Field.Root>
+
+                        <FakeTextarea
+                          ref={addressRef}
+                          defaultValue="체험 장소를 입력하세요"
+                          placeholder="체험 장소를 입력하세요"
+                          className="large-input-placeholder"
+                          size="xl"
+                          autoResize
+                          style={{
+                            fontSize: "38px",
+                            lineHeight: "48px",
+                            border: "none",
+                            fontWeight: "bold",
+                            textAlign: "center",
+                          }}
+                        />
                       </VStack>
                     </Box>
                     <Box
@@ -936,26 +929,25 @@ export default function ExperienceForm({
                     >
                       <VStack gap="$300">
                         <Text typography="heading3">소요 시간 설정</Text>
-                        <Field.Root name="duration">
-                          <VStack gap="$200" alignItems="center">
-                            <Box
-                              display="flex"
-                              justifyContent="center"
-                              width="100%"
-                            >
-                              <NumberStepper
-                                value={formData.duration}
-                                onChange={(value) =>
-                                  setFormData({ ...formData, duration: value })
-                                }
-                                min={30}
-                                max={480}
-                                showButtons={true}
-                              />
-                            </Box>
-                            <Text typography="body1">분</Text>
-                          </VStack>
-                        </Field.Root>
+
+                        <VStack gap="$200" alignItems="center">
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            width="100%"
+                          >
+                            <NumberStepper
+                              value={formData.duration}
+                              onChange={(value) =>
+                                setFormData({ ...formData, duration: value })
+                              }
+                              min={30}
+                              max={480}
+                              showButtons={true}
+                            />
+                          </Box>
+                          <Text typography="body1">분</Text>
+                        </VStack>
                       </VStack>
                     </Box>
                     <Box
@@ -1010,23 +1002,22 @@ export default function ExperienceForm({
                     >
                       <VStack gap="$300">
                         <Text typography="heading3">최대 인원 추가</Text>
-                        <Field.Root name="maxCapacity">
-                          <Box
-                            display="flex"
-                            justifyContent="center"
-                            width="100%"
-                          >
-                            <NumberStepper
-                              value={formData.maxCapacity}
-                              onChange={(value) =>
-                                setFormData({ ...formData, maxCapacity: value })
-                              }
-                              min={1}
-                              max={20}
-                              showButtons={true}
-                            />
-                          </Box>
-                        </Field.Root>
+
+                        <Box
+                          display="flex"
+                          justifyContent="center"
+                          width="100%"
+                        >
+                          <NumberStepper
+                            value={formData.maxCapacity}
+                            onChange={(value) =>
+                              setFormData({ ...formData, maxCapacity: value })
+                            }
+                            min={1}
+                            max={20}
+                            showButtons={true}
+                          />
+                        </Box>
                       </VStack>
                     </Box>
                     <Box
@@ -1089,23 +1080,22 @@ export default function ExperienceForm({
                       ) : (
                         <VStack gap="$300">
                           <Text typography="heading3">게스트 1인당 요금</Text>
-                          <Field.Root name="price">
-                            <Box
-                              display="flex"
-                              justifyContent="center"
-                              width="100%"
-                            >
-                              <NumberStepper
-                                value={formData.price}
-                                showButtons={false}
-                                onChange={(value) =>
-                                  setFormData({ ...formData, price: value })
-                                }
-                                min={5000}
-                                max={1000000}
-                              />
-                            </Box>
-                          </Field.Root>
+
+                          <Box
+                            display="flex"
+                            justifyContent="center"
+                            width="100%"
+                          >
+                            <NumberStepper
+                              value={formData.price}
+                              showButtons={false}
+                              onChange={(value) =>
+                                setFormData({ ...formData, price: value })
+                              }
+                              min={5000}
+                              max={1000000}
+                            />
+                          </Box>
                         </VStack>
                       )}
                     </Box>

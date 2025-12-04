@@ -78,6 +78,8 @@ export const FakeTextarea = forwardRef<FakeTextareaRef, FakeTextareaProps>(
           alignItems: "center",
           justifyContent: "center",
           minHeight: "600px",
+          maxHeight: "630px",
+          overflow: "auto",
           outline: "none",
           whiteSpace: "pre-wrap",
           wordWrap: "break-word",

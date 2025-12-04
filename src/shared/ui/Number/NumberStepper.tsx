@@ -44,7 +44,7 @@ export function NumberStepper({
   };
 
   return (
-    <div className="py-62">
+    <div className="py-6">
       <VStack gap="$075" justifyContent="start" width="100%">
         <HStack alignItems="center" justifyContent="center" gap="$150">
           {showButtons && (

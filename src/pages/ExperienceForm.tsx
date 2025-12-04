@@ -16,6 +16,7 @@ import { useFunnel } from "@use-funnel/react-router-dom";
 import { NumberStepper } from "../shared/ui/Number/NumberStepper";
 import { CategoryCard, CategoryOption } from "../shared/ui/CategoryCard";
 import TimeSelector from "../shared/ui/select/TimeSelector";
+import PriceSelector from "../shared/ui/select/PriceSelector";
 import {
   useSuggestMaterialsMutation,
   useSuggestStepsMutation,
@@ -124,9 +125,16 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
   },
 ];
 
-export default function ExperienceForm() {
+interface ExperienceFormProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
+
+export default function ExperienceForm({
+  isOpen,
+  setIsOpen,
+}: ExperienceFormProps) {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
 
   const funnel = useFunnel<ExperienceFormSteps>({
     id: "experience-form",
@@ -186,17 +194,42 @@ export default function ExperienceForm() {
   };
 
   return (
-    <Sheet.Root open={isOpen} onOpenChange={handleOpenChange}>
+    <Sheet.Root
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+      closeOnClickOverlay={true}
+    >
       <Sheet.Popup
         positionerElement={<Sheet.PositionerPrimitive side="bottom" />}
         style={{
-          maxHeight: "calc(100vh - 110px)",
-          borderTopLeftRadius: "24px",
-          borderTopRightRadius: "24px",
+          height: "calc(100vh - 56px)",
+          borderTopLeftRadius: "20px",
+          borderTopRightRadius: "20px",
         }}
       >
         <Sheet.Header>
-          <Sheet.Close />
+          <Sheet.Close
+            render={(props: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+              <button
+                {...props}
+                style={{
+                  position: "absolute",
+                  right: "16px",
+                  top: "16px",
+                  background: "transparent",
+                  border: "none",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  padding: "8px",
+                  lineHeight: "1",
+                  color: "var(--vapor-color-text-secondary, #666)",
+                }}
+                aria-label="닫기"
+              >
+                ✕
+              </button>
+            )}
+          />
         </Sheet.Header>
         <Sheet.Body
           style={{
@@ -409,8 +442,9 @@ export default function ExperienceForm() {
                               const response =
                                 await suggestMaterialsMutation.mutateAsync({
                                   category: formData.category,
-                                  years_of_experience:
-                                    String(formData.experienceYears),
+                                  years_of_experience: String(
+                                    formData.experienceYears
+                                  ),
                                   job_description: occupation,
                                 });
 
@@ -421,10 +455,7 @@ export default function ExperienceForm() {
                               }));
                               history.push("ingredients", { occupation });
                             } catch (error) {
-                              console.error(
-                                "재료 추천 API 호출 실패:",
-                                error
-                              );
+                              console.error("재료 추천 API 호출 실패:", error);
                               alert(
                                 "재료 추천을 가져오는데 실패했습니다. 다시 시도해주세요."
                               );
@@ -507,8 +538,9 @@ export default function ExperienceForm() {
                               const response =
                                 await suggestStepsMutation.mutateAsync({
                                   category: formData.category,
-                                  years_of_experience:
-                                    String(formData.experienceYears),
+                                  years_of_experience: String(
+                                    formData.experienceYears
+                                  ),
                                   job_description: formData.occupation,
                                   materials: ingredients,
                                 });
@@ -826,20 +858,16 @@ export default function ExperienceForm() {
                             display="flex"
                             justifyContent="center"
                             width="100%"
-                            alignItems="center"
                           >
-                            <HStack gap="$100" alignItems="center">
-                              <Text typography="heading1">₩</Text>
-                              <NumberStepper
-                                value={formData.price}
-                                onChange={(value) =>
-                                  setFormData({ ...formData, price: value })
-                                }
-                                min={0}
-                                max={1000000}
-                                showButtons={true}
-                              />
-                            </HStack>
+                            <NumberStepper
+                              value={formData.price}
+                              showButtons={false}
+                              onChange={(value) =>
+                                setFormData({ ...formData, price: value })
+                              }
+                              min={5000}
+                              max={1000000}
+                            />
                           </Box>
                         </Field.Root>
                       </VStack>
@@ -851,62 +879,73 @@ export default function ExperienceForm() {
                         backgroundColor: "$white",
                       }}
                     >
-                      <HStack gap="$150">
-                        <Button
-                          type="button"
-                          width="100%"
-                          size="xl"
-                          variant="outline"
-                          onClick={() => history.back()}
-                          disabled={generateExperiencePlanMutation.isPending}
-                        >
-                          이전
-                        </Button>
-                        <Button
-                          type="button"
-                          width="100%"
-                          size="xl"
-                          onClick={async () => {
-                            try {
-                              const response =
-                                await generateExperiencePlanMutation.mutateAsync(
-                                  {
-                                    category: formData.category,
-                                    years_of_experience:
-                                      String(formData.experienceYears),
-                                    job_description: formData.occupation,
-                                    materials: formData.ingredients,
-                                    location: formData.address,
-                                    duration_minutes: String(formData.duration),
-                                    capacity: String(formData.maxCapacity),
-                                    price_per_person: String(formData.price),
-                                  }
-                                );
+                      <VStack gap="$300">
+                        <HStack gap="$150">
+                          <Button
+                            type="button"
+                            width="100%"
+                            size="xl"
+                            variant="outline"
+                            onClick={() => history.back()}
+                            disabled={generateExperiencePlanMutation.isPending}
+                          >
+                            이전
+                          </Button>
+                          <Button
+                            type="button"
+                            width="100%"
+                            size="xl"
+                            onClick={async () => {
+                              try {
+                                const response =
+                                  await generateExperiencePlanMutation.mutateAsync(
+                                    {
+                                      category: formData.category,
+                                      years_of_experience: String(
+                                        formData.experienceYears
+                                      ),
+                                      job_description: formData.occupation,
+                                      materials: formData.ingredients,
+                                      location: formData.address,
+                                      duration_minutes: String(
+                                        formData.duration
+                                      ),
+                                      capacity: String(formData.maxCapacity),
+                                      price_per_person: String(formData.price),
+                                    }
+                                  );
 
-                              setFormData((prev) => ({
-                                ...prev,
-                                template: response,
-                              }));
-                              history.push("recommendation", {
-                                price: formData.price,
-                              });
-                            } catch (error) {
-                              console.error(
-                                "체험 템플릿 생성 API 호출 실패:",
-                                error
-                              );
-                              alert(
-                                "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요."
-                              );
-                            }
-                          }}
-                          disabled={generateExperiencePlanMutation.isPending}
-                        >
-                          {generateExperiencePlanMutation.isPending
-                            ? "템플릿 생성 중..."
-                            : "다음"}
-                        </Button>
-                      </HStack>
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  template: response.template,
+                                }));
+                                history.push("recommendation", {
+                                  price: formData.price,
+                                });
+                              } catch (error) {
+                                console.error(
+                                  "체험 템플릿 생성 API 호출 실패:",
+                                  error
+                                );
+                                alert(
+                                  "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요."
+                                );
+                              }
+                            }}
+                            disabled={generateExperiencePlanMutation.isPending}
+                          >
+                            {generateExperiencePlanMutation.isPending
+                              ? "템플릿 생성 중..."
+                              : "다음"}
+                          </Button>
+                        </HStack>
+                        <PriceSelector
+                          selectedPrice={formData.price}
+                          onChange={(value) =>
+                            setFormData({ ...formData, price: value })
+                          }
+                        />
+                      </VStack>
                     </Box>
                   </>
                 )}
@@ -926,10 +965,12 @@ export default function ExperienceForm() {
                           backgroundColor="$canvas-100"
                           borderRadius="$300"
                         >
-                          <Text typography="body1" style={{ whiteSpace: "pre-wrap" }}>
-                            {formData.template
-                              ? JSON.stringify(formData.template, null, 2)
-                              : "입력하신 정보를 바탕으로 체험이 준비되었습니다!"}
+                          <Text
+                            typography="body1"
+                            style={{ whiteSpace: "pre-wrap" }}
+                          >
+                            {formData.template ||
+                              "입력하신 정보를 바탕으로 체험이 준비되었습니다!"}
                           </Text>
                         </Box>
                       </VStack>
@@ -964,8 +1005,9 @@ export default function ExperienceForm() {
                                 location: formData.address,
                                 duration_minutes: formData.duration,
                                 capacity: formData.maxCapacity,
-                                years_of_experience:
-                                  String(formData.experienceYears),
+                                years_of_experience: String(
+                                  formData.experienceYears
+                                ),
                                 job_description: formData.occupation,
                                 materials: formData.ingredients,
                                 price_per_person: String(formData.price),
@@ -993,17 +1035,6 @@ export default function ExperienceForm() {
                 )}
               />
             </Form>
-
-            {/* 진행 상황 표시 */}
-            <Box marginTop="$400">
-              <Text
-                typography="body2"
-                foreground="hint-100"
-                className="v-text-center"
-              >
-                현재 단계: {String(funnel.step)}
-              </Text>
-            </Box>
           </Box>
         </Sheet.Body>
       </Sheet.Popup>

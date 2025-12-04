@@ -5,16 +5,20 @@ import { useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { Button, Text, VStack } from "@vapor-ui/core";
+import { ClassResponse } from "../api/queries";
 
-interface SlideItem {
-  id: string;
-  imageUrl: string;
-  title: string;
-  description?: string;
-}
+// 구분자별 이미지 매핑
+export const imageMap: Record<string, string> = {
+  돌담: "/images/stone.png",
+  감귤: "/images/tangerine.jpg",
+  해녀: "/images/haenyeo.jpg",
+  요리: "/images/cooking.jpg",
+  목공: "/images/woodworking.jpg",
+};
 
 interface ImageSliderProps {
-  slides: readonly SlideItem[];
+  slides: readonly ClassResponse[];
   spaceBetween?: number;
   slidesPerView?: number;
   navigation?: boolean;
@@ -26,7 +30,7 @@ interface ImageSliderProps {
   /** Flip interaction: hover (desktop) or tap (mobile) */
   flipMode?: "hover" | "tap";
   /** Custom back-face renderer (default shows title/description) */
-  renderBack?: (slide: SlideItem) => ReactNode;
+  renderBack?: (slide: ClassResponse) => ReactNode;
 }
 
 export function ImageSlider({
@@ -49,7 +53,6 @@ export function ImageSlider({
       spaceBetween={spaceBetween}
       slidesPerView={slidesPerView}
       navigation={navigation}
-      pagination={pagination ? { clickable: true } : false}
       centeredSlides={centeredSlides}
       loop={loop}
       className="w-full h-full"
@@ -78,46 +81,74 @@ export function ImageSlider({
                     : "",
                 ].join(" ")}
               >
+                {/* 앞 */}
                 <div className="absolute inset-0 backface-hidden">
-                  <img
-                    src={slide.imageUrl}
-                    alt={slide.title}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent flex flex-col justify-end p-6">
-                    <h3 className="text-white text-2xl font-bold mb-2">
-                      {slide.title}
-                    </h3>
+                  <div className="p-6 flex flex-col h-full">
+                    <div className="mb-5">
+                      <img
+                        src={imageMap[slide.category]}
+                        alt={slide.job_description}
+                        className="w-[260px] h-[250px] object-cover"
+                      />
+                      <VStack>
+                        <Text typography="heading6">{slide.category}</Text>
+                        <Text typography="subtitle2">
+                          {slide.job_description}
+                        </Text>
+                      </VStack>
+                    </div>
+                    <Button onClick={(e) => e.stopPropagation()}>
+                      전화하기
+                    </Button>
                   </div>
                 </div>
-                <div className="absolute inset-0 backface-hidden [transform:rotateY(180deg)] bg-black/75 text-white flex flex-col justify-center gap-3 p-6">
-                  {renderBack ? (
-                    renderBack(slide)
-                  ) : (
-                    <>
-                      <h3 className="text-2xl font-bold">{slide.title}</h3>
-                      {slide.description && (
-                        <p className="text-sm text-white/90 leading-relaxed">
-                          {slide.description}
-                        </p>
-                      )}
-                    </>
-                  )}
+
+                {/* 뒤 */}
+                <div
+                  className="absolute inset-0 backface-hidden [transform:rotateY(180deg)] bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${imageMap[slide.category]})`,
+                  }}
+                >
+                  {/* 배경 이미지 위에 텍스트가 잘 보이도록 어두운 오버레이를 추가합니다. */}
+                  <div className="absolute inset-0 bg-black/80" />
+                  {/* 콘텐츠 */}
+                  <div className="relative h-full text-white flex flex-col justify-center gap-3 p-6">
+                    {renderBack ? (
+                      renderBack(slide)
+                    ) : (
+                      <>
+                        <h3 className="text-2xl font-bold">{slide.category}</h3>
+                        {slide.job_description && (
+                          <>
+                            <p className="text-sm text-white/90 leading-relaxed">
+                              {slide.job_description}
+                            </p>
+                            <p className="text-sm text-white/90 leading-relaxed">
+                              {slide.job_description}
+                            </p>
+                          </>
+                        )}
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             ) : (
               <div className="relative w-full h-full">
                 <img
-                  src={slide.imageUrl}
-                  alt={slide.title}
+                  src={imageMap[slide.category]}
+                  alt={slide.category}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-6">
                   <h3 className="text-white text-2xl font-bold mb-2">
-                    {slide.title}
+                    {slide.category}
                   </h3>
-                  {slide.description && (
-                    <p className="text-white/90 text-sm">{slide.description}</p>
+                  {slide.job_description && (
+                    <p className="text-white/90 text-sm">
+                      {slide.job_description}
+                    </p>
                   )}
                 </div>
               </div>

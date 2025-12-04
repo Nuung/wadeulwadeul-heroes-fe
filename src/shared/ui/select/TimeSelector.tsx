@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Picker from "react-mobile-picker";
+import "./TimeSelector.css";
 
 interface TimeSelectorProps {
   selectedTime?: number;
@@ -24,7 +25,7 @@ export default function TimeSelector({
   };
 
   return (
-    <div style={{ width: "100%", maxHeight: "300px" }}>
+    <div className="time-selector-wrapper">
       <Picker
         value={pickerValue}
         onChange={handleChange}

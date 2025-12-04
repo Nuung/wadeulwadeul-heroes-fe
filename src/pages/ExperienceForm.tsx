@@ -400,12 +400,11 @@ export default function ExperienceForm({
                           <Field.Root name="occupation">
                             <Textarea
                               ref={occupationRef}
-                              placeholder={
+                              defaultValue={
                                 CATEGORY_OPTIONS.find(
                                   (opt) => opt.value === formData.category
                                 )?.label + " 전문가"
                               }
-                              defaultValue={formData.occupation}
                               className="large-input-placeholder"
                               size="xl"
                               autoResize
@@ -413,7 +412,7 @@ export default function ExperienceForm({
                                 fontSize: "38px",
                                 lineHeight: "48px",
                                 border: "none",
-                                fontWeight: "normal",
+                                fontWeight: "bold",
                                 textAlign: "center",
                               }}
                             />
@@ -508,19 +507,14 @@ export default function ExperienceForm({
                             <Textarea
                               ref={ingredientsRef}
                               placeholder="예: 돌, 시멘트, 흙손 등"
-                              value={formData.ingredients}
-                              onChange={(e) =>
-                                setFormData({
-                                  ...formData,
-                                  ingredients: e.target.value,
-                                })
-                              }
+                              defaultValue={formData.ingredients}
                               autoResize
                               size="xl"
                               style={{
                                 fontSize: "32px",
                                 lineHeight: "44px",
                                 minHeight: "300px",
+                                fontWeight: "bold",
                               }}
                             />
                           </Field.Root>
@@ -609,19 +603,14 @@ export default function ExperienceForm({
                           <Textarea
                             ref={stepsRef}
                             placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
-                            value={formData.steps}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                steps: e.target.value,
-                              })
-                            }
+                            defaultValue={formData.steps}
                             autoResize
                             size="xl"
                             style={{
                               fontSize: "32px",
                               lineHeight: "44px",
                               minHeight: "300px",
+                              fontWeight: "bold",
                             }}
                           />
                         </Field.Root>
@@ -685,7 +674,7 @@ export default function ExperienceForm({
                               fontSize: "38px",
                               lineHeight: "48px",
                               border: "none",
-                              fontWeight: "normal",
+                              fontWeight: "bold",
                               textAlign: "center",
                             }}
                           />

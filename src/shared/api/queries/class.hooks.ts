@@ -12,16 +12,23 @@ import {
 import {
   createClass,
   deleteClass,
-  getClass,
+  deleteEnrollment,
+  enrollClass,
+  getClassById,
   getClasses,
+  getClassesPublic,
+  getMyClassesEnrollments,
+  getMyEnrollments,
   updateClass,
 } from "./class.api";
 import type {
-  Class,
+  ClassCreate,
+  ClassEnrollmentResponse,
   ClassListParams,
-  ClassListResponse,
-  CreateClassDto,
-  UpdateClassDto,
+  ClassResponse,
+  ClassUpdate,
+  EnrollmentCreate,
+  EnrollmentResponse,
 } from "./class.types";
 
 /**
@@ -31,16 +38,25 @@ export const classKeys = {
   all: ["class"] as const,
   lists: () => [...classKeys.all, "list"] as const,
   list: (params?: ClassListParams) => [...classKeys.lists(), params] as const,
+  publicLists: () => [...classKeys.all, "publicList"] as const,
+  publicList: (params?: ClassListParams) =>
+    [...classKeys.publicLists(), params] as const,
   details: () => [...classKeys.all, "detail"] as const,
-  detail: (id: number) => [...classKeys.details(), id] as const,
+  detail: (id: string) => [...classKeys.details(), id] as const,
+  enrollments: () => [...classKeys.all, "enrollments"] as const,
+  myEnrollments: () => [...classKeys.enrollments(), "me"] as const,
+  myClassesEnrollments: () => [...classKeys.enrollments(), "myClasses"] as const,
 } as const;
 
 /**
- * 클래스 목록 조회 Query
+ * List Classes Query
  */
 export const useClassesQuery = (
   params?: ClassListParams,
-  options?: Omit<UseQueryOptions<Class[], Error>, "queryKey" | "queryFn">
+  options?: Omit<
+    UseQueryOptions<ClassResponse[], Error>,
+    "queryKey" | "queryFn"
+  >
 ) => {
   return useQuery({
     queryKey: classKeys.list(params),
@@ -50,25 +66,43 @@ export const useClassesQuery = (
 };
 
 /**
- * 클래스 상세 조회 Query
+ * List Public Classes Query
  */
-export const useClassQuery = (
-  id: number,
-  options?: Omit<UseQueryOptions<Class, Error>, "queryKey" | "queryFn">
+export const usePublicClassesQuery = (
+  params?: ClassListParams,
+  options?: Omit<
+    UseQueryOptions<ClassResponse[], Error>,
+    "queryKey" | "queryFn"
+  >
 ) => {
   return useQuery({
-    queryKey: classKeys.detail(id),
-    queryFn: () => getClass(id),
+    queryKey: classKeys.publicList(params),
+    queryFn: () => getClassesPublic(params),
     ...options,
   });
 };
 
 /**
- * 클래스 생성 Mutation
+ * Get Class By ID Query
+ */
+export const useClassByIdQuery = (
+  class_id: string,
+  options?: Omit<UseQueryOptions<ClassResponse, Error>, "queryKey" | "queryFn">
+) => {
+  return useQuery({
+    queryKey: classKeys.detail(class_id),
+    queryFn: () => getClassById(class_id),
+    enabled: !!class_id,
+    ...options,
+  });
+};
+
+/**
+ * Create Class Mutation
  */
 export const useCreateClassMutation = (
   options?: Omit<
-    UseMutationOptions<Class, Error, CreateClassDto>,
+    UseMutationOptions<ClassResponse, Error, ClassCreate>,
     "mutationFn" | "onSuccess"
   >
 ) => {
@@ -77,19 +111,24 @@ export const useCreateClassMutation = (
   return useMutation({
     ...options,
     mutationFn: createClass,
-    onSuccess: async (...args) => {
-      // 목록 쿼리 무효화
+    onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: classKeys.lists() });
+      await queryClient.invalidateQueries({ queryKey: classKeys.publicLists() });
+      await queryClient.invalidateQueries({ queryKey: classKeys.myClassesEnrollments() });
     },
   });
 };
 
 /**
- * 클래스 수정 Mutation
+ * Update Class Mutation
  */
 export const useUpdateClassMutation = (
   options?: Omit<
-    UseMutationOptions<Class, Error, { id: number; data: UpdateClassDto }>,
+    UseMutationOptions<
+      ClassResponse,
+      Error,
+      { class_id: string; data: ClassUpdate }
+    >,
     "mutationFn" | "onSuccess"
   >
 ) => {
@@ -97,37 +136,99 @@ export const useUpdateClassMutation = (
 
   return useMutation({
     ...options,
-    mutationFn: ({ id, data }) => updateClass(id, data),
+    mutationFn: ({ class_id, data }) => updateClass(class_id, data),
     onSuccess: async (data, variables) => {
-      // 해당 상세 쿼리 무효화
       await queryClient.invalidateQueries({
-        queryKey: classKeys.detail(variables.id),
+        queryKey: classKeys.detail(variables.class_id),
       });
-      // 목록 쿼리 무효화
       await queryClient.invalidateQueries({ queryKey: classKeys.lists() });
+      await queryClient.invalidateQueries({ queryKey: classKeys.publicLists() });
+      await queryClient.invalidateQueries({ queryKey: classKeys.myClassesEnrollments() });
     },
   });
 };
 
 /**
- * 클래스 삭제 Mutation
+ * Delete Class Mutation
  */
 export const useDeleteClassMutation = (
-  options?: Omit<
-    UseMutationOptions<void, Error, number>,
-    "mutationFn" | "onSuccess"
-  >
+  options?: Omit<UseMutationOptions<void, Error, string>, "mutationFn" | "onSuccess">
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     ...options,
     mutationFn: deleteClass,
-    onSuccess: async (data, id) => {
-      // 해당 상세 쿼리 제거
-      queryClient.removeQueries({ queryKey: classKeys.detail(id) });
-      // 목록 쿼리 무효화
+    onSuccess: async (data, class_id) => {
+      queryClient.removeQueries({ queryKey: classKeys.detail(class_id) });
       await queryClient.invalidateQueries({ queryKey: classKeys.lists() });
+      await queryClient.invalidateQueries({ queryKey: classKeys.publicLists() });
+      await queryClient.invalidateQueries({ queryKey: classKeys.myClassesEnrollments() });
     },
+  });
+};
+
+/**
+ * Enroll Class Mutation
+ */
+export const useEnrollClassMutation = (
+  options?: Omit<
+    UseMutationOptions<EnrollmentResponse, Error, { class_id: string; data: EnrollmentCreate }>,
+    "mutationFn" | "onSuccess"
+  >
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    ...options,
+    mutationFn: ({ class_id, data }) => enrollClass(class_id, data),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: classKeys.myEnrollments() });
+      await queryClient.invalidateQueries({ queryKey: classKeys.myClassesEnrollments() });
+    },
+  });
+};
+
+/**
+ * List My Enrollments Query
+ */
+export const useMyEnrollmentsQuery = (
+  options?: Omit<UseQueryOptions<EnrollmentResponse[], Error>, "queryKey" | "queryFn">
+) => {
+  return useQuery({
+    queryKey: classKeys.myEnrollments(),
+    queryFn: getMyEnrollments,
+    ...options,
+  });
+};
+
+/**
+ * Delete Enrollment Mutation
+ */
+export const useDeleteEnrollmentMutation = (
+  options?: Omit<UseMutationOptions<void, Error, string>, "mutationFn" | "onSuccess">
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    ...options,
+    mutationFn: deleteEnrollment,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: classKeys.myEnrollments() });
+      await queryClient.invalidateQueries({ queryKey: classKeys.myClassesEnrollments() });
+    },
+  });
+};
+
+/**
+ * List My Classes Enrollments Query
+ */
+export const useMyClassesEnrollmentsQuery = (
+  options?: Omit<UseQueryOptions<ClassEnrollmentResponse[], Error>, "queryKey" | "queryFn">
+) => {
+  return useQuery({
+    queryKey: classKeys.myClassesEnrollments(),
+    queryFn: getMyClassesEnrollments,
+    ...options,
   });
 };

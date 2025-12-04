@@ -1,8 +1,21 @@
 import { Button, HStack, VStack, Text } from "@vapor-ui/core";
+import { USER_STORAGE_KEY } from "@/shared/api";
 import { useNavigate } from "react-router-dom";
+
+const OLD_USER_ID = "550e8400-e29b-41d4-a716-446655440002";
+const YOUNG_USER_ID = "550e8400-e29b-41d4-a716-446655440011";
 
 export default function Main() {
   const navigate = useNavigate();
+
+  const setUserSession = (userId: string) => {
+    try {
+      localStorage.removeItem(USER_STORAGE_KEY);
+      localStorage.setItem(USER_STORAGE_KEY, userId);
+    } catch (error) {
+      console.error("Failed to persist user session", error);
+    }
+  };
 
   return (
     <VStack
@@ -29,7 +42,10 @@ export default function Main() {
             text-white
           "
           color="$primary-200"
-          onClick={() => navigate("/creator")}
+          onClick={() => {
+            setUserSession(OLD_USER_ID);
+            navigate("/creator");
+          }}
         >
           클래스를 만들래요
         </Button>
@@ -42,7 +58,10 @@ export default function Main() {
             text-white
           "
           color="$primary-200"
-          onClick={() => navigate("/user")}
+          onClick={() => {
+            setUserSession(YOUNG_USER_ID);
+            navigate("/user");
+          }}
         >
           클래스에 참여할래요
         </Button>

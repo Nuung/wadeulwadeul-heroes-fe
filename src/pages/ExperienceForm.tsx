@@ -127,7 +127,6 @@ export default function ExperienceForm() {
                       type="button"
                       onClick={() => history.push('experience', { category: formData.category })}
                       disabled={!formData.category}
-                      stretch
                     >
                       다음
                     </Button>
@@ -161,7 +160,6 @@ export default function ExperienceForm() {
                         onClick={() =>
                           history.push('occupation', { experienceYears: formData.experienceYears })
                         }
-                        stretch
                       >
                         다음
                       </Button>
@@ -191,7 +189,6 @@ export default function ExperienceForm() {
                         type="button"
                         onClick={() => history.push('expertise', { occupation: formData.occupation })}
                         disabled={!formData.occupation.trim()}
-                        stretch
                       >
                         다음
                       </Button>
@@ -214,7 +211,7 @@ export default function ExperienceForm() {
                       <Button type="button" variant="outline" onClick={() => history.back()}>
                         이전
                       </Button>
-                      <Button type="button" onClick={() => history.push('location', {})} stretch>
+                      <Button type="button" onClick={() => history.push('location', {})}>
                         다음
                       </Button>
                     </HStack>
@@ -245,7 +242,6 @@ export default function ExperienceForm() {
                         type="button"
                         onClick={() => history.push('name', { address: formData.address })}
                         disabled={!formData.address}
-                        stretch
                       >
                         다음
                       </Button>
@@ -275,7 +271,6 @@ export default function ExperienceForm() {
                         type="button"
                         onClick={() => history.push('duration', { name: formData.name })}
                         disabled={!formData.name.trim()}
-                        stretch
                       >
                         다음
                       </Button>
@@ -309,7 +304,6 @@ export default function ExperienceForm() {
                       <Button
                         type="button"
                         onClick={() => history.push('capacity', { duration: formData.duration })}
-                        stretch
                       >
                         다음
                       </Button>
@@ -340,7 +334,6 @@ export default function ExperienceForm() {
                       <Button
                         type="button"
                         onClick={() => history.push('price', { maxCapacity: formData.maxCapacity })}
-                        stretch
                       >
                         다음
                       </Button>
@@ -371,7 +364,7 @@ export default function ExperienceForm() {
                       <Button type="button" variant="outline" onClick={() => history.back()}>
                         이전
                       </Button>
-                      <Button type="submit" colorPalette="success" stretch>
+                      <Button type="submit" colorPalette="success">
                         등록 완료
                       </Button>
                     </HStack>

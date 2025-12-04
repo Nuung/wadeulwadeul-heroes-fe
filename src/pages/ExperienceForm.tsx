@@ -1081,6 +1081,11 @@ export default function ExperienceForm({
                               height={80}
                             />
                           </Box>
+                          <SkeletonGroup gap={12} vertical>
+                            <Skeleton variant="text" width="100%" height={20} />
+                            <Skeleton variant="text" width="90%" height={20} />
+                            <Skeleton variant="text" width="80%" height={20} />
+                          </SkeletonGroup>
                         </VStack>
                       ) : (
                         <VStack gap="$300">
@@ -1104,48 +1109,48 @@ export default function ExperienceForm({
                         </VStack>
                       )}
                     </Box>
-                    <Box
-                      style={{
-                        padding: "24px",
-                        paddingBottom: "30px",
-                        backgroundColor: "$white",
-                      }}
-                    >
-                      <VStack gap="$300">
-                        <HStack gap="$150">
-                          <Button
-                            type="button"
-                            width="100%"
-                            size="xl"
-                            variant="outline"
-                            onClick={() => history.back()}
-                            disabled={generateExperiencePlanMutation.isPending}
-                          >
-                            이전
-                          </Button>
-                          <Button
-                            type="button"
-                            width="100%"
-                            size="xl"
-                            onClick={async () => {
-                              try {
-                                const response =
-                                  await generateExperiencePlanMutation.mutateAsync(
-                                    {
-                                      category: formData.category,
-                                      years_of_experience: String(
-                                        formData.experienceYears
-                                      ),
-                                      job_description: formData.occupation,
-                                      materials: formData.ingredients,
-                                      location: formData.address,
-                                      duration_minutes: String(
-                                        formData.duration
-                                      ),
-                                      capacity: String(formData.maxCapacity),
-                                      price_per_person: String(formData.price),
-                                    }
-                                  );
+                    {!generateExperiencePlanMutation.isPending && (
+                      <Box
+                        style={{
+                          padding: "24px",
+                          paddingBottom: "30px",
+                          backgroundColor: "$white",
+                        }}
+                      >
+                        <VStack gap="$300">
+                          <HStack gap="$150">
+                            <Button
+                              type="button"
+                              width="100%"
+                              size="xl"
+                              variant="outline"
+                              onClick={() => history.back()}
+                            >
+                              이전
+                            </Button>
+                            <Button
+                              type="button"
+                              width="100%"
+                              size="xl"
+                              onClick={async () => {
+                                try {
+                                  const response =
+                                    await generateExperiencePlanMutation.mutateAsync(
+                                      {
+                                        category: formData.category,
+                                        years_of_experience: String(
+                                          formData.experienceYears
+                                        ),
+                                        job_description: formData.occupation,
+                                        materials: formData.ingredients,
+                                        location: formData.address,
+                                        duration_minutes: String(
+                                          formData.duration
+                                        ),
+                                        capacity: String(formData.maxCapacity),
+                                        price_per_person: String(formData.price),
+                                      }
+                                    );
 
                                 setFormData((prev) => ({
                                   ...prev,
@@ -1191,7 +1196,7 @@ export default function ExperienceForm({
                         padding: "24px",
                       }}
                     >
-                      {createClassMutation.isPending || !formData.template ? (
+                      {generateExperiencePlanMutation.isPending || createClassMutation.isPending || !formData.template ? (
                         <VStack gap="$300">
                           <Skeleton variant="text" width="50%" height={36} />
                           <Box

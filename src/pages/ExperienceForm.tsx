@@ -16,6 +16,12 @@ import { useFunnel } from "@use-funnel/react-router-dom";
 import { NumberStepper } from "../shared/ui/Number/NumberStepper";
 import { CategoryCard, CategoryOption } from "../shared/ui/CategoryCard";
 import TimeSelector from "../shared/ui/select/TimeSelector";
+import {
+  useSuggestMaterialsMutation,
+  useSuggestStepsMutation,
+  useGenerateExperiencePlanMutation,
+} from "../shared/api/queries/experience-plan.hooks";
+import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
 
 // 10단계 Funnel 타입 정의
 type ExperienceFormSteps = {
@@ -146,12 +152,18 @@ export default function ExperienceForm() {
     duration: 60,
     maxCapacity: 1,
     price: 0,
+    template: "",
   });
+
+  // TanStack Query Mutations
+  const suggestMaterialsMutation = useSuggestMaterialsMutation();
+  const suggestStepsMutation = useSuggestStepsMutation();
+  const generateExperiencePlanMutation = useGenerateExperiencePlanMutation();
+  const createClassMutation = useCreateClassMutation();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("최종 제출 데이터:", formData);
-    alert("체험이 등록되었습니다!");
+    // Form submission is now handled in the recommendation step
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -369,6 +381,7 @@ export default function ExperienceForm() {
                           size="xl"
                           variant="outline"
                           onClick={() => history.back()}
+                          disabled={suggestMaterialsMutation.isPending}
                         >
                           이전
                         </Button>
@@ -376,14 +389,41 @@ export default function ExperienceForm() {
                           type="button"
                           width="100%"
                           size="xl"
-                          onClick={() => {
+                          onClick={async () => {
                             const occupation =
                               occupationRef.current?.value || "";
                             setFormData({ ...formData, occupation });
-                            history.push("ingredients", { occupation });
+
+                            try {
+                              const response =
+                                await suggestMaterialsMutation.mutateAsync({
+                                  category: formData.category,
+                                  years_of_experience:
+                                    String(formData.experienceYears),
+                                  job_description: occupation,
+                                });
+
+                              setFormData((prev) => ({
+                                ...prev,
+                                occupation,
+                                ingredients: response.suggestion,
+                              }));
+                              history.push("ingredients", { occupation });
+                            } catch (error) {
+                              console.error(
+                                "재료 추천 API 호출 실패:",
+                                error
+                              );
+                              alert(
+                                "재료 추천을 가져오는데 실패했습니다. 다시 시도해주세요."
+                              );
+                            }
                           }}
+                          disabled={suggestMaterialsMutation.isPending}
                         >
-                          다음
+                          {suggestMaterialsMutation.isPending
+                            ? "추천 생성 중..."
+                            : "다음"}
                         </Button>
                       </HStack>
                     </Box>
@@ -407,7 +447,13 @@ export default function ExperienceForm() {
                           <Textarea
                             ref={ingredientsRef}
                             placeholder="예: 돌, 시멘트, 흙손 등"
-                            defaultValue={formData.ingredients}
+                            value={formData.ingredients}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                ingredients: e.target.value,
+                              })
+                            }
                             autoResize
                             size="xl"
                             style={{
@@ -433,6 +479,7 @@ export default function ExperienceForm() {
                           size="xl"
                           variant="outline"
                           onClick={() => history.back()}
+                          disabled={suggestStepsMutation.isPending}
                         >
                           이전
                         </Button>
@@ -440,14 +487,42 @@ export default function ExperienceForm() {
                           type="button"
                           width="100%"
                           size="xl"
-                          onClick={() => {
+                          onClick={async () => {
                             const ingredients =
                               ingredientsRef.current?.value || "";
                             setFormData({ ...formData, ingredients });
-                            history.push("steps", { ingredients });
+
+                            try {
+                              const response =
+                                await suggestStepsMutation.mutateAsync({
+                                  category: formData.category,
+                                  years_of_experience:
+                                    String(formData.experienceYears),
+                                  job_description: formData.occupation,
+                                  materials: ingredients,
+                                });
+
+                              setFormData((prev) => ({
+                                ...prev,
+                                ingredients,
+                                steps: response.suggestion,
+                              }));
+                              history.push("steps", { ingredients });
+                            } catch (error) {
+                              console.error(
+                                "진행 단계 추천 API 호출 실패:",
+                                error
+                              );
+                              alert(
+                                "진행 단계 추천을 가져오는데 실패했습니다. 다시 시도해주세요."
+                              );
+                            }
                           }}
+                          disabled={suggestStepsMutation.isPending}
                         >
-                          다음
+                          {suggestStepsMutation.isPending
+                            ? "추천 생성 중..."
+                            : "다음"}
                         </Button>
                       </HStack>
                     </Box>
@@ -471,7 +546,13 @@ export default function ExperienceForm() {
                           <Textarea
                             ref={stepsRef}
                             placeholder="예: 1. 돌을 고르고 준비합니다&#10;2. 시멘트를 섞습니다&#10;3. 돌을 쌓아갑니다"
-                            defaultValue={formData.steps}
+                            value={formData.steps}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                steps: e.target.value,
+                              })
+                            }
                             autoResize
                             size="xl"
                             style={{
@@ -766,6 +847,7 @@ export default function ExperienceForm() {
                           size="xl"
                           variant="outline"
                           onClick={() => history.back()}
+                          disabled={generateExperiencePlanMutation.isPending}
                         >
                           이전
                         </Button>
@@ -773,13 +855,45 @@ export default function ExperienceForm() {
                           type="button"
                           width="100%"
                           size="xl"
-                          onClick={() =>
-                            history.push("recommendation", {
-                              price: formData.price,
-                            })
-                          }
+                          onClick={async () => {
+                            try {
+                              const response =
+                                await generateExperiencePlanMutation.mutateAsync(
+                                  {
+                                    category: formData.category,
+                                    years_of_experience:
+                                      String(formData.experienceYears),
+                                    job_description: formData.occupation,
+                                    materials: formData.ingredients,
+                                    location: formData.address,
+                                    duration_minutes: String(formData.duration),
+                                    capacity: String(formData.maxCapacity),
+                                    price_per_person: String(formData.price),
+                                  }
+                                );
+
+                              setFormData((prev) => ({
+                                ...prev,
+                                template: response.template,
+                              }));
+                              history.push("recommendation", {
+                                price: formData.price,
+                              });
+                            } catch (error) {
+                              console.error(
+                                "체험 템플릿 생성 API 호출 실패:",
+                                error
+                              );
+                              alert(
+                                "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요."
+                              );
+                            }
+                          }}
+                          disabled={generateExperiencePlanMutation.isPending}
                         >
-                          다음
+                          {generateExperiencePlanMutation.isPending
+                            ? "템플릿 생성 중..."
+                            : "다음"}
                         </Button>
                       </HStack>
                     </Box>
@@ -801,8 +915,9 @@ export default function ExperienceForm() {
                           backgroundColor="$canvas-100"
                           borderRadius="$300"
                         >
-                          <Text typography="body1">
-                            입력하신 정보를 바탕으로 체험이 준비되었습니다!
+                          <Text typography="body1" style={{ whiteSpace: "pre-wrap" }}>
+                            {formData.template ||
+                              "입력하신 정보를 바탕으로 체험이 준비되었습니다!"}
                           </Text>
                         </Box>
                       </VStack>
@@ -821,16 +936,44 @@ export default function ExperienceForm() {
                           size="xl"
                           variant="outline"
                           onClick={() => history.back()}
+                          disabled={createClassMutation.isPending}
                         >
                           이전
                         </Button>
                         <Button
                           width="100%"
                           size="xl"
-                          type="submit"
+                          type="button"
                           colorPalette="success"
+                          onClick={async () => {
+                            try {
+                              await createClassMutation.mutateAsync({
+                                category: formData.category,
+                                location: formData.address,
+                                duration_minutes: formData.duration,
+                                capacity: formData.maxCapacity,
+                                years_of_experience:
+                                  String(formData.experienceYears),
+                                job_description: formData.occupation,
+                                materials: formData.ingredients,
+                                price_per_person: String(formData.price),
+                                template: formData.template,
+                              });
+
+                              alert("체험이 성공적으로 등록되었습니다!");
+                              navigate("/");
+                            } catch (error) {
+                              console.error("체험 등록 API 호출 실패:", error);
+                              alert(
+                                "체험 등록에 실패했습니다. 다시 시도해주세요."
+                              );
+                            }
+                          }}
+                          disabled={createClassMutation.isPending}
                         >
-                          등록 완료
+                          {createClassMutation.isPending
+                            ? "등록 중..."
+                            : "등록 완료"}
                         </Button>
                       </HStack>
                     </Box>

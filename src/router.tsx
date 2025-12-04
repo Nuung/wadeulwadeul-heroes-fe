@@ -3,6 +3,7 @@ import App from "./App";
 import Main from "./pages/Main";
 import { UserMain } from "./pages/user/UserMain";
 import { CreatorMain } from "./pages/creator/CreatorMain";
+import ExperienceForm from "./pages/ExperienceForm";
 
 export const router = createBrowserRouter([
   {
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Main /> },
       { path: "creator", element: <CreatorMain /> },
       { path: "content", element: <UserMain /> },
+      { path: 'form', element: <ExperienceForm />}
     ],
   },
 ]);

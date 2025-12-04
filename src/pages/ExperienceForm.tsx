@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
@@ -31,6 +31,7 @@ import {
 } from "../shared/api/queries/experience-plan.hooks";
 import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
 import type { ClassTemplateData } from "../shared/api/queries/class.types";
+import { FakeTextarea, FakeTextareaRef } from "../shared/ui/FakeTextarea";
 import "@/shared/ui/addrlinkSample.css";
 
 // 10단계 Funnel 타입 정의
@@ -192,10 +193,24 @@ export default function ExperienceForm({
   });
 
   // useRef를 사용하여 occupation, ingredients, steps, address 필드의 값을 관리
-  const occupationRef = useRef<HTMLTextAreaElement>(null);
+  const occupationRef = useRef<FakeTextareaRef>(null);
   const ingredientsRef = useRef<HTMLTextAreaElement>(null);
   const stepsRef = useRef<HTMLTextAreaElement>(null);
-  const addressRef = useRef<HTMLTextAreaElement>(null);
+  const addressRef = useRef<FakeTextareaRef>(null);
+
+  // 초기 formData 값을 상수로 정의
+  const initialFormData = {
+    category: "",
+    experienceYears: 0,
+    occupation: "",
+    ingredients: "",
+    steps: "",
+    address: "",
+    duration: 60,
+    maxCapacity: 1,
+    price: 0,
+    template: null,
+  };
 
   const [formData, setFormData] = useState<{
     category: string;
@@ -208,18 +223,7 @@ export default function ExperienceForm({
     maxCapacity: number;
     price: number;
     template: ClassTemplateData | null;
-  }>({
-    category: "",
-    experienceYears: 0,
-    occupation: "",
-    ingredients: "",
-    steps: "",
-    address: "",
-    duration: 60,
-    maxCapacity: 1,
-    price: 0,
-    template: null,
-  });
+  }>(initialFormData);
   const [addressKeyword, setAddressKeyword] = useState("");
   const [addressResults, setAddressResults] = useState<JusoAddress[]>([]);
   const [addressSearchError, setAddressSearchError] = useState<string | null>(
@@ -245,7 +249,40 @@ export default function ExperienceForm({
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
+
+    // Sheet가 닫힐 때 모든 값 초기화
+    if (!open) {
+      // formData 초기화
+      setFormData(initialFormData);
+
+      // ref 초기화
+      occupationRef.current?.reset();
+      if (ingredientsRef.current) {
+        ingredientsRef.current.value = "";
+      }
+      if (stepsRef.current) {
+        stepsRef.current.value = "";
+      }
+      addressRef.current?.reset();
+
+      // funnel을 초기 단계로 리셋 (React Router의 navigate 사용)
+      navigate("?", { replace: true });
+    }
   };
+
+  // Sheet가 열릴 때 funnel을 초기 단계로 강제 리셋
+  useEffect(() => {
+    if (isOpen) {
+      // Sheet가 열릴 때마다 항상 funnel을 초기 step으로 설정
+      const initialFunnelState = JSON.stringify({
+        step: "category",
+        context: {},
+      });
+      navigate(`?experience-form=${encodeURIComponent(initialFunnelState)}`, {
+        replace: true,
+      });
+    }
+  }, [isOpen, navigate]);
 
   const handleAddressSearch = async () => {
     const sanitizedKeyword = sanitizeJusoKeyword(addressKeyword);
@@ -501,8 +538,7 @@ export default function ExperienceForm({
                         <VStack gap="$300">
                           <Text typography="heading3">어떤 일을 하시나요?</Text>
                           <Field.Root name="occupation">
-                            <Textarea
-                              key={formData.category}
+                            <FakeTextarea
                               ref={occupationRef}
                               placeholder={
                                 CATEGORY_OPTIONS.find(
@@ -523,7 +559,6 @@ export default function ExperienceForm({
                                 border: "none",
                                 fontWeight: "bold",
                                 textAlign: "center",
-                                minHeight: "200px",
                               }}
                             />
                           </Field.Root>
@@ -835,7 +870,7 @@ export default function ExperienceForm({
                           ) : null}
                         </Box>
                         <Field.Root name="location">
-                          <Textarea
+                          <FakeTextarea
                             ref={addressRef}
                             defaultValue="체험 장소를 입력하세요"
                             placeholder="체험 장소를 입력하세요"

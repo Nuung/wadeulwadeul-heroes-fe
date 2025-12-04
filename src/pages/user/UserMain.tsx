@@ -5,6 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { CategoryTab } from "./CategoryTab";
 import { NavMenu } from "./NavMenu";
 import { ClassTemplateData, usePublicClassesQuery } from "@/shared/api/queries";
+import { Box } from "@vapor-ui/core";
 
 export function UserMain() {
   const location = useLocation();
@@ -32,10 +33,11 @@ export function UserMain() {
         <CategoryTab />
       </div>
       {isLoading || !isSuccess ? (
-        <>데이터를 조회중입니다...</>
+        <div className="mt-10">데이터를 조회중입니다...</div>
       ) : (
         <div className="w-full max-w-6xl mx-auto py-4">
           <ImageSlider
+            key={1}
             slides={data}
             spaceBetween={12}
             slidesPerView={1.2}
@@ -46,15 +48,14 @@ export function UserMain() {
             renderBack={(slide) => {
               if (slide.template)
                 return (
-                  <>
-                    <h4>{slide.template["체험 제목"]}</h4>
-                    <h5>{slide.capacity} 년차</h5>
-                    <hr />
-
+                  <Box className="p-1">
+                    <h4 className="mb-1">{slide.template["체험 제목"]}</h4>
+                    <h5 className="mb-1">{slide.capacity} 년차</h5>
+                    <hr className="my-3" />
                     <>
                       {classDescList.map((desc) => (
-                        <>
-                          <p className="text-sm text-white/90 leading-relaxed">
+                        <Box marginBottom={2}>
+                          <p className="text-sm text-white/90 leading-relaxed mb-1">
                             {desc}
                           </p>
                           {slide.template && (
@@ -62,10 +63,10 @@ export function UserMain() {
                               {slide.template[desc as keyof ClassTemplateData]}
                             </p>
                           )}
-                        </>
+                        </Box>
                       ))}
                     </>
-                  </>
+                  </Box>
                 );
             }}
           />

@@ -87,20 +87,32 @@ export function ImageSlider({
                   {/* 앞 */}
                   <div className="absolute inset-0 backface-hidden">
                     <div className="p-6 flex flex-col h-full">
-                      <div className="mb-5">
+                      <div className="mb-3">
                         <img
                           src={imageMap[slide.category]}
                           alt={slide.job_description}
                           className="w-[260px] h-[250px] object-cover"
                         />
                         <VStack>
-                          <Text typography="heading6">{slide.category}</Text>
-                          <Text typography="subtitle2">
-                            {slide.job_description}
-                          </Text>
+                          {slide.template && (
+                            <>
+                              <Text typography="heading6">
+                                {slide.template["체험 제목"].split("-")[0]}
+                              </Text>
+                              {slide.template["체험 제목"].includes("-") ? (
+                                <Text typography="subtitle2">
+                                  {slide.template["체험 제목"].split("-")[1]}
+                                </Text>
+                              ) : (
+                                <Text typography="subtitle2">
+                                  {slide.job_description}
+                                </Text>
+                              )}
+                            </>
+                          )}
                         </VStack>
                       </div>
-                      <Button onClick={(e) => e.stopPropagation()}>
+                      <Button size="lg" onClick={(e) => e.stopPropagation()}>
                         전화하기
                       </Button>
                     </div>

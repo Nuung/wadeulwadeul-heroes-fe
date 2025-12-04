@@ -16,7 +16,9 @@ export function CreatorClassList() {
       overflow="scroll"
     >
       {isLoading && (
-        <Text render={<div />}>클래스 목록을 불러오는 중입니다...</Text>
+        <Box padding="$100" backgroundColor="$primary-100" className="rounded">
+          <Text render={<div />}>클래스 목록을 불러오는 중입니다...</Text>
+        </Box>
       )}
       {isError && (
         <Text render={<div />}>오류가 발생했습니다: {error.message}</Text>

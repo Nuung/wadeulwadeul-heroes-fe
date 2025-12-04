@@ -16,6 +16,7 @@
     "@vapor-ui/core": "^1.0.0-beta.7",
     "@vapor-ui/icons": "^1.0.0-beta.5",
     "axios": "^1.13.2",
+    "notistack": "^3.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.67.0",

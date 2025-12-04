@@ -26,6 +26,7 @@ import {
 } from "../shared/api/queries/experience-plan.hooks";
 import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
 import type { ClassTemplateData } from "../shared/api/queries/class.types";
+import { useSnackbar } from "notistack";
 
 // 10단계 Funnel 타입 정의
 type ExperienceFormSteps = {
@@ -188,6 +189,7 @@ export default function ExperienceForm({
     // Form submission is now handled in the recommendation step
   };
 
+  const { enqueueSnackbar } = useSnackbar();
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
   };
@@ -466,8 +468,10 @@ export default function ExperienceForm({
                               history.push("ingredients", { occupation });
                             } catch (error) {
                               console.error("재료 추천 API 호출 실패:", error);
-                              alert(
-                                "재료 추천을 가져오는데 실패했습니다. 다시 시도해주세요."
+
+                              enqueueSnackbar(
+                                "재료 추천을 가져오는데 실패했습니다. 다시 시도해주세요.",
+                                { variant: "error" }
                               );
                             }
                           }}
@@ -576,8 +580,9 @@ export default function ExperienceForm({
                                 "진행 단계 추천 API 호출 실패:",
                                 error
                               );
-                              alert(
-                                "진행 단계 추천을 가져오는데 실패했습니다. 다시 시도해주세요."
+                              enqueueSnackbar(
+                                "진행 단계 추천을 가져오는데 실패했습니다. 다시 시도해주세요.",
+                                { variant: "error" }
                               );
                             }
                           }}
@@ -964,8 +969,9 @@ export default function ExperienceForm({
                                   "체험 템플릿 생성 API 호출 실패:",
                                   error
                                 );
-                                alert(
-                                  "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요."
+                                enqueueSnackbar(
+                                  "체험 템플릿 생성에 실패했습니다. 다시 시도해주세요.",
+                                  { variant: "error" }
                                 );
                               }
                             }}
@@ -1082,12 +1088,17 @@ export default function ExperienceForm({
                                 template: formData.template,
                               });
 
-                              alert("체험이 성공적으로 등록되었습니다!");
+                              enqueueSnackbar(
+                                "체험이 성공적으로 등록되었습니다!",
+                                { variant: "success" }
+                              );
                               navigate("/");
                             } catch (error) {
                               console.error("체험 등록 API 호출 실패:", error);
-                              alert(
-                                "체험 등록에 실패했습니다. 다시 시도해주세요."
+
+                              enqueueSnackbar(
+                                "체험 등록에 실패했습니다. 다시 시도해주세요.",
+                                { variant: "error" }
                               );
                             }
                           }}

@@ -4,6 +4,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import "./index.css";
 import { USER_STORAGE_KEY, baseClient } from "./shared/api";
+import { ToastProvider } from "./shared/hook/ToastProvider";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,7 +43,9 @@ baseClient.interceptors.request.use(
 );
 
 createRoot(document.getElementById("root")!).render(
-  <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router} />
-  </QueryClientProvider>
+  <ToastProvider>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  </ToastProvider>
 );

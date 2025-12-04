@@ -8,7 +8,7 @@ export function NavMenu() {
           <NavigationMenu.Link href="#"></NavigationMenu.Link>
         </NavigationMenu.Item>
         <NavigationMenu.Item>
-          <NavigationMenu.Link href="#">
+          <NavigationMenu.Link href="/">
             <Text typography="heading2">삼춘한수</Text>
           </NavigationMenu.Link>
         </NavigationMenu.Item>

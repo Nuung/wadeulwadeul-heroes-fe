@@ -176,17 +176,42 @@ export default function ExperienceForm() {
   };
 
   return (
-    <Sheet.Root open={isOpen} onOpenChange={handleOpenChange}>
+    <Sheet.Root
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+      closeOnClickOverlay={true}
+    >
       <Sheet.Popup
         positionerElement={<Sheet.PositionerPrimitive side="bottom" />}
         style={{
-          maxHeight: "calc(100vh - 110px)",
-          borderTopLeftRadius: "24px",
-          borderTopRightRadius: "24px",
+          height: "calc(100vh - 56px)",
+          borderTopLeftRadius: "20px",
+          borderTopRightRadius: "20px",
         }}
       >
         <Sheet.Header>
-          <Sheet.Close />
+          <Sheet.Close
+            render={(props: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+              <button
+                {...props}
+                style={{
+                  position: "absolute",
+                  right: "16px",
+                  top: "16px",
+                  background: "transparent",
+                  border: "none",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                  padding: "8px",
+                  lineHeight: "1",
+                  color: "var(--vapor-color-text-secondary, #666)",
+                }}
+                aria-label="닫기"
+              >
+                ✕
+              </button>
+            )}
+          />
         </Sheet.Header>
         <Sheet.Body
           style={{
@@ -992,17 +1017,6 @@ export default function ExperienceForm() {
                 )}
               />
             </Form>
-
-            {/* 진행 상황 표시 */}
-            <Box marginTop="$400">
-              <Text
-                typography="body2"
-                foreground="hint-100"
-                className="v-text-center"
-              >
-                현재 단계: {String(funnel.step)}
-              </Text>
-            </Box>
           </Box>
         </Sheet.Body>
       </Sheet.Popup>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Picker from "react-mobile-picker";
+import "./PriceSelector.css";
 
 interface PriceSelectorProps {
   selectedPrice?: number;
@@ -24,7 +25,7 @@ export default function PriceSelector({
   };
 
   return (
-    <div style={{ width: "100%", maxHeight: "300px" }}>
+    <div className="price-selector-wrapper">
       <Picker
         value={pickerValue}
         onChange={handleChange}

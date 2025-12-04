@@ -14,7 +14,7 @@ export const imageMap: Record<string, string> = {
   감귤: "/images/tangerine.jpg",
   해녀: "/images/haenyeo.jpg",
   요리: "/images/cooking.jpg",
-  목공: "/images/woodworking.jpg",
+  목공: "/images/woodworking.png",
 };
 
 interface ImageSliderProps {

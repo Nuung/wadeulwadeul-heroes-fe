@@ -1,3 +1,5 @@
+import { CreatorClassList } from "./CreatorClassList";
+
 export function CreatorMain() {
-  return <>시니어 메인</>;
+  return <CreatorClassList />;
 }

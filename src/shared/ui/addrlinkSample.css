@@ -1,0 +1,70 @@
+.addrlink-search-box {
+  border: 1px solid #d9d9d9;
+  background: #f8f9fb;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.addrlink-search-form {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.addrlink-result-list {
+  margin-top: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  max-height: 240px;
+  overflow: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.addrlink-result-item {
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  border: none;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fff;
+  cursor: pointer;
+}
+
+.addrlink-result-item:last-child {
+  border-bottom: none;
+}
+
+.addrlink-result-item:hover {
+  background: #f5f7fb;
+}
+
+.addrlink-zip {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1f3c88;
+  margin-bottom: 4px;
+}
+
+.addrlink-road {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+}
+
+.addrlink-jibun {
+  display: block;
+  font-size: 13px;
+  color: #4b5563;
+  margin-top: 2px;
+}
+
+.addrlink-extra {
+  display: block;
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 2px;
+}

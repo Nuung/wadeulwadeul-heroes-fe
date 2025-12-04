@@ -78,9 +78,7 @@ interface RadioItemProps {
 function RadioItem({ value, label, disabled, size = 'md' }: RadioItemProps) {
   return (
     <HStack gap={2} alignItems="center">
-      <Radio.Root value={value} disabled={disabled} size={size}>
-        <Radio.Indicator />
-      </Radio.Root>
+      <Radio.Root value={value} disabled={disabled} size={size} />
       <Field.Label>{label}</Field.Label>
     </HStack>
   );

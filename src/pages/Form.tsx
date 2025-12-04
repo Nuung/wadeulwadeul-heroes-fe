@@ -76,7 +76,7 @@ export default function FormPage() {
       <Form onSubmit={handleSubmit}>
         <VStack className="v-gap-6">
           {/* TextInput 예시 - Field.Root 패턴 */}
-          <Field.Root name="name" required invalid={!!errors.name}>
+          <Field.Root name="name" invalid={!!errors.name}>
             <Field.Label>이름 *</Field.Label>
             <TextInput
               placeholder="이름을 입력하세요"
@@ -87,12 +87,13 @@ export default function FormPage() {
                   setErrors({ ...errors, name: undefined });
                 }
               }}
+              required
             />
             {errors.name && <Field.Error>{errors.name}</Field.Error>}
           </Field.Root>
 
           {/* Select 예시 - Field.Root 패턴 */}
-          <Field.Root name="birthYear" required invalid={!!errors.birthYear}>
+          <Field.Root name="birthYear" invalid={!!errors.birthYear}>
             <Field.Label>출생 연도 *</Field.Label>
             <Field.Description>출생 연도를 선택해주세요</Field.Description>
             <Select.Root
@@ -106,6 +107,7 @@ export default function FormPage() {
                 }
               }}
               placeholder="출생연도를 선택하세요"
+              required
             >
               <Select.Trigger width="100%" />
               <Select.Popup>
@@ -123,7 +125,7 @@ export default function FormPage() {
           </Field.Root>
 
           {/* RadioGroup 예시 - Field.Root 패턴 */}
-          <Field.Root name="gender" required invalid={!!errors.gender}>
+          <Field.Root name="gender" invalid={!!errors.gender}>
             <Field.Label>성별 *</Field.Label>
             <FormRadioGroup
               name="gender"
@@ -136,6 +138,7 @@ export default function FormPage() {
                   setErrors({ ...errors, gender: undefined });
                 }
               }}
+              required
             />
             <Field.Description>개인정보 보호를 위해 선택사항입니다.</Field.Description>
             {errors.gender && <Field.Error>{errors.gender}</Field.Error>}

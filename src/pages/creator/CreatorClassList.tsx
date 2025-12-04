@@ -8,15 +8,21 @@ export function CreatorClassList() {
     <Flex
       flexDirection="column"
       width="100%"
-      height="450px"
+      height="490px"
       gap="$200"
       padding="$300"
       backgroundColor="gray-100"
       borderRadius="$200"
       overflow="scroll"
+      className="mt-2"
     >
       {isLoading && (
-        <Box padding="$100" backgroundColor="$primary-100" className="rounded">
+        <Box
+          padding="$100"
+          backgroundColor="$primary-100"
+          className="rounded"
+          width="100%"
+        >
           <Text render={<div />}>클래스 목록을 불러오는 중입니다...</Text>
         </Box>
       )}
@@ -36,40 +42,46 @@ export function CreatorCard({ classData }: { classData: ClassResponse }) {
   const dayOfMonth = date.getDate();
   const dayOfWeek = date.toLocaleDateString("ko-KR", { weekday: "short" });
 
+  const formatPrice = (value?: string) => {
+    const parsed = Number(value);
+    if (Number.isNaN(parsed)) {
+      return value ?? "-";
+    }
+    return `${new Intl.NumberFormat("ko-KR").format(parsed)}원`;
+  };
+
   return (
-    <Box padding="$100" backgroundColor="$primary-100" className="rounded">
-      <VStack gap="$075" alignItems="start" width="100%">
-        {/* 클래스 제목 및 소개 */}
-        <Text render={<div />} typography="heading4">
-          {classData.template?.["체험 제목"]}
+    <Box
+      key={classData.id}
+      className="rounded-xl border border-surface-200 bg-surface-50 p-4 shadow-sm"
+    >
+      <HStack className="justify-between items-start gap-3">
+        <Text typography="subtitle1" className="font-semibold">
+          {classData?.job_description ?? "클래스"}
         </Text>
-        <Text render={<div />} color="$neutral-700">
-          {classData.template?.["클래스 소개"]}
+        <Text typography="body3" className="text-surface-500">
+          신청
         </Text>
-
-        {/* 기본 정보 */}
-        <VStack gap="$050">
-          <Text render={<div />}>카테고리: {classData.category}</Text>
-          <Text render={<div />}>위치: {classData.location}</Text>
-          <Text render={<div />}>가격: {classData.price_per_person}</Text>
-          <Text render={<div />}>인원: {classData.capacity}명</Text>
-          <Text render={<div />}>
-            소요 시간: {classData.duration_minutes}분
-          </Text>
-        </VStack>
-
-        {/* 추가 정보 */}
-        <VStack gap="$025" alignItems="start">
-          <Text render={<div />}>경력: {classData.years_of_experience}</Text>
-          <Text render={<div />}>직무: {classData.job_description}</Text>
-          <Text render={<div />}>준비물: {classData.materials}</Text>
-        </VStack>
-
-        {/* 날짜 표시 (임시) */}
-        <Text color="$neutral-500">
-          등록 날짜: {dayOfWeek} {dayOfMonth}일
+      </HStack>
+      <HStack className="gap-2 flex-wrap mt-2">
+        <Text typography="body3" className="text-surface-500">
+          카테고리 · {classData?.category ?? "-"}
         </Text>
-      </VStack>
+        <Text typography="body3" className="text-surface-500">
+          장소 · {classData?.location ?? "-"}
+        </Text>
+      </HStack>
+      <HStack className="gap-3 mt-2 flex-wrap">
+        <Text typography="body3" className="text-surface-500">
+          인당 비용 · {formatPrice(classData?.price_per_person)}
+        </Text>
+        <Text typography="body3" className="text-surface-500">
+          소요 시간 · {classData?.duration_minutes ?? "-"}분
+        </Text>
+        <Text typography="body3" className="text-surface-500">
+          신청 인원 · {classData.capacity}명
+        </Text>
+      </HStack>
     </Box>
   );
 }

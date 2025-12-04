@@ -28,7 +28,7 @@ export function UserMain() {
   const classDescList = ["클래스 소개", "난이도", "로드맵"];
   return (
     <>
-      <NavMenu />
+      <NavMenu isSplash />
       <div className="w-full mt-3">
         <CategoryTab />
       </div>

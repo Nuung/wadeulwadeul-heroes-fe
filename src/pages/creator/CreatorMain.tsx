@@ -13,22 +13,27 @@ export function CreatorMain() {
   const classList = data;
   return (
     <>
-      <NavMenu />
-      <VStack>
-        {isLoading && !isSuccess && classList && classList.length < 1 ? (
-          <Onboarding />
-        ) : (
-          <CreatorClassList />
+      <NavMenu width="100" isSplash />
+      <VStack justifyContent="space-between" className="h-[calc(100vh-80px)]">
+        <VStack>
+          {isLoading && !isSuccess && classList && classList.length < 1 ? (
+            <Onboarding />
+          ) : (
+            <CreatorClassList />
+          )}
+        </VStack>
+        {!isLoading && (
+          <Box className="w-full flex justify-center">
+            <Button
+              className="w-327px m-7"
+              size="lg"
+              onClick={() => setIsExperience(true)}
+              width="100%"
+            >
+              클래스 만들기
+            </Button>
+          </Box>
         )}
-        <Button
-          className="w-327px m-7"
-          size="lg"
-          onClick={() => {
-            setIsExperience(true);
-          }}
-        >
-          클래스 만들기
-        </Button>
       </VStack>
       <ExperienceForm isOpen={isExperience} setIsOpen={setIsExperience} />
     </>

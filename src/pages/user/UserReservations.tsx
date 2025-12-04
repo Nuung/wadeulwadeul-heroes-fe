@@ -32,7 +32,7 @@ export function UserReservations() {
   const navigate = useNavigate();
   const location = useLocation();
   const [currPath, setCurrPath] = useState(
-    location.pathname.substring(1) || "user",
+    location.pathname.substring(1) || "user"
   );
 
   useEffect(() => {
@@ -88,7 +88,7 @@ export function UserReservations() {
 
   return (
     <>
-      <NavMenu />
+      <NavMenu isSplash />
       <VStack className="w-full gap-4 px-4 pb-[120px]">
         <VStack className="gap-1 mt-2">
           <Text typography="heading3" className="font-semibold">

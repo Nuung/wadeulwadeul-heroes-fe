@@ -32,8 +32,8 @@ export default function Main() {
   "
     >
       {/* 상단 로고 영역 */}
-      <VStack className="items-center gap-2 mt-50">
-        <NavMenu width="200" />
+      <VStack className="items-center gap-2 mt-20">
+        <NavMenu width="200" isSplash />
         <Text className="text-surface-500 text-sm mt-2">
           한 수 배워가는 공간, 삼춘한수
         </Text>

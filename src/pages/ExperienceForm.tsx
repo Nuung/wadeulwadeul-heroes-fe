@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
@@ -128,6 +128,44 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
   },
 ];
 
+type CategoryValue = (typeof CATEGORY_OPTIONS)[number]["value"];
+
+const CATEGORY_OCCUPATION_TITLES: Record<CategoryValue, string[]> = {
+  stone: ["제주 돌담 복원 장인", "전통 돌쌓기 석공", "농가 돌담 설계 전문가"],
+  tangerine: [
+    "감귤 대농장 주인",
+    "소소한 감귤 농장 운영자",
+    "감귤 선과장 관리 매니저",
+    "감귤 브랜드 디렉터",
+  ],
+  haenyeo: ["베테랑 해녀 선배", "해녀 물질 안전 강사", "초보 해녀 멘토"],
+  cooking: [
+    "제주 향토요리 셰프",
+    "팜투테이블 쿠킹클래스 강사",
+    "로컬 제철요리 연구 셰프",
+  ],
+  woodworking: [
+    "수제 가구 목공방 마스터",
+    "전통 목재 가공 장인",
+    "생활 목공 DIY 강사",
+  ],
+};
+
+const getOccupationTitle = (category: string) => {
+  const option = CATEGORY_OPTIONS.find((opt) => opt.value === category);
+  if (!option) {
+    return "현장 전문가";
+  }
+
+  const titles = CATEGORY_OCCUPATION_TITLES[option.value];
+  if (!titles?.length) {
+    return `${option.label} 전문가`;
+  }
+
+  const randomIndex = Math.floor(Math.random() * titles.length);
+  return titles[randomIndex];
+};
+
 interface ExperienceFormProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
@@ -176,6 +214,11 @@ export default function ExperienceForm({
     price: 0,
     template: null,
   });
+
+  const occupationPlaceholder = useMemo(
+    () => getOccupationTitle(formData.category),
+    [formData.category]
+  );
 
   // TanStack Query Mutations
   const suggestMaterialsMutation = useSuggestMaterialsMutation();
@@ -399,12 +442,9 @@ export default function ExperienceForm({
                           <Text typography="heading3">어떤 일을 하시나요?</Text>
                           <Field.Root name="occupation">
                             <Textarea
+                              key={formData.category}
                               ref={occupationRef}
-                              defaultValue={
-                                CATEGORY_OPTIONS.find(
-                                  (opt) => opt.value === formData.category
-                                )?.label + " 전문가"
-                              }
+                              defaultValue={occupationPlaceholder}
                               className="large-input-placeholder"
                               size="xl"
                               autoResize

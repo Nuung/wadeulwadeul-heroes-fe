@@ -19,12 +19,29 @@ export interface MapInstance {
   };
 }
 
+export interface LatNLng {
+  lat: number;
+  lng: number;
+  getLat?: () => number;
+  getLng?: () => number;
+}
+
 export interface MarkerInstance {
   setMap: (map: MapInstance | null) => void;
   setPosition: (position: LatLng) => void;
   getPosition: () => LatLng;
   setTitle: (title: string) => void;
   setClickable: (clickable: boolean) => void;
+  setZIndex: (zIndex: number) => void;
+}
+
+export interface InfoWindowInstance {
+  open: (map: MapInstance, marker: MarkerInstance) => void;
+  close: () => void;
+  setContent: (content: string) => void;
+  getContent: () => string;
+  setPosition: (position: LatLng) => void;
+  getPosition: () => LatLng;
   setZIndex: (zIndex: number) => void;
 }
 
@@ -104,6 +121,12 @@ export interface KakaoMap {
     image?: MarkerImageInstance;
     title?: string;
   }) => MarkerInstance;
+  InfoWindow: new (options: {
+    content: string;
+    position?: LatLng;
+    removable?: boolean;
+    zIndex?: number;
+  }) => InfoWindowInstance;
   load: (callback: () => void) => void;
   event: {
     addListener: (

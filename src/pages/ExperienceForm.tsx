@@ -1,5 +1,6 @@
 import { useMemo, useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Form,
   TextInput,
@@ -28,7 +29,10 @@ import {
   useSuggestStepsMutation,
   useGenerateExperiencePlanMutation,
 } from "../shared/api/queries/experience-plan.hooks";
-import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
+import {
+  useCreateClassMutation,
+  classKeys,
+} from "../shared/api/queries/class.hooks";
 import type { ClassTemplateData } from "../shared/api/queries/class.types";
 // import { FakeTextarea, FakeTextareaRef } from "../shared/ui/FakeTextarea";
 import "@/shared/ui/addrlinkSample.css";
@@ -183,6 +187,7 @@ export default function ExperienceForm({
   setIsOpen,
 }: ExperienceFormProps) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const funnel = useFunnel<ExperienceFormSteps>({
     id: "experience-form",
@@ -1269,6 +1274,21 @@ export default function ExperienceForm({
                                 "체험이 성공적으로 등록되었습니다!",
                                 { variant: "success" }
                               );
+
+                              // Sheet 닫기
+                              setIsOpen(false);
+
+                              // Query 캐시 무효화
+                              await queryClient.invalidateQueries({
+                                queryKey: classKeys.lists(),
+                              });
+                              await queryClient.invalidateQueries({
+                                queryKey: classKeys.publicLists(),
+                              });
+                              await queryClient.invalidateQueries({
+                                queryKey: classKeys.myClassesEnrollments(),
+                              });
+
                               navigate("/creator");
                             } catch (error) {
                               console.error("체험 등록 API 호출 실패:", error);

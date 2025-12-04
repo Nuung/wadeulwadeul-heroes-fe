@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
 import "./index.css";
-import { baseClient } from "./shared/api";
+import { USER_STORAGE_KEY, baseClient } from "./shared/api";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,9 +17,10 @@ const queryClient = new QueryClient({
 
 baseClient.interceptors.request.use(
   async (config) => {
-    const { session } = {
-      session: { userId: "550e8400-e29b-41d4-a716-446655440001" },
-    }; //useSessionStore.getState();
+    const userId =
+      typeof window !== "undefined"
+        ? localStorage.getItem(USER_STORAGE_KEY) ?? undefined
+        : undefined;
 
     // 브라우저 기본 정보 (fallback)
     config.headers.set(
@@ -31,8 +32,8 @@ baseClient.interceptors.request.use(
       Intl.DateTimeFormat().resolvedOptions().locale?.split("-")[1] || "KR"
     );
 
-    if (session) {
-      config.headers.set("wadeulwadeul-user", session.userId);
+    if (userId) {
+      config.headers.set("wadeulwadeul-user", userId);
     }
 
     return config;

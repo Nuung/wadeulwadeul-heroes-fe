@@ -4,6 +4,7 @@ export const BASE_URL = "/wadeul";
 export const baseClient = axios.create({
   baseURL: BASE_URL,
 });
+export const USER_STORAGE_KEY = "wadeulwadeul-user";
 
 /**
  * API 요청 옵션 타입
@@ -127,4 +128,3 @@ export const apiDelete = async <TResponse = unknown, TParams = unknown>(
   });
   return response.data;
 };
-

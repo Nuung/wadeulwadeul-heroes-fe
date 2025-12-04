@@ -13,7 +13,7 @@ export default function MobileBottomNav({
 }: MobileBottomNavProps) {
   const items = [
     { key: "user", label: "홈", icon: <HomeIcon /> },
-    { key: "#", label: "예약현황", icon: <TestOutlineIcon /> },
+    { key: "user/reservations", label: "예약현황", icon: <TestOutlineIcon /> },
     { key: "#", label: "마이", icon: <UserOutlineIcon /> },
   ];
 

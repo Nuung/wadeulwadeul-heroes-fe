@@ -261,7 +261,9 @@ export default function ExperienceForm({
       const results = await searchJusoAddress(sanitizedKeyword);
       setAddressResults(results);
       if (!results.length) {
-        setAddressSearchError("검색 결과가 없습니다. 다른 키워드를 입력해주세요.");
+        setAddressSearchError(
+          "검색 결과가 없습니다. 다른 키워드를 입력해주세요."
+        );
       }
     } catch (error) {
       const message =
@@ -276,7 +278,10 @@ export default function ExperienceForm({
   };
 
   const handleSelectAddress = (item: JusoAddress) => {
-    const composed = [item.zipNo ? `[${item.zipNo}]` : "", item.roadAddr || item.jibunAddr]
+    const composed = [
+      item.zipNo ? `[${item.zipNo}]` : "",
+      item.roadAddr || item.jibunAddr,
+    ]
       .filter(Boolean)
       .join(" ");
     const nextAddress = composed || item.roadAddr || item.jibunAddr || "";
@@ -499,7 +504,16 @@ export default function ExperienceForm({
                             <Textarea
                               key={formData.category}
                               ref={occupationRef}
-                              defaultValue={occupationPlaceholder}
+                              placeholder={
+                                CATEGORY_OPTIONS.find(
+                                  (opt) => opt.value === formData.category
+                                )?.label + " 전문가"
+                              }
+                              defaultValue={
+                                CATEGORY_OPTIONS.find(
+                                  (opt) => opt.value === formData.category
+                                )?.label + " 전문가"
+                              }
                               className="large-input-placeholder"
                               size="xl"
                               autoResize
@@ -509,6 +523,7 @@ export default function ExperienceForm({
                                 border: "none",
                                 fontWeight: "bold",
                                 textAlign: "center",
+                                minHeight: "200px",
                               }}
                             />
                           </Field.Root>
@@ -762,7 +777,9 @@ export default function ExperienceForm({
                             <TextInput
                               placeholder="도로명 / 건물명 / 지번으로 검색"
                               value={addressKeyword}
-                              onChange={(event) => setAddressKeyword(event.target.value)}
+                              onChange={(event) =>
+                                setAddressKeyword(event.target.value)
+                              }
                               onKeyDown={(event) => {
                                 if (event.key === "Enter") {
                                   event.preventDefault();
@@ -783,7 +800,7 @@ export default function ExperienceForm({
                             </Button>
                           </div>
                           {addressSearchError ? (
-                            <Text size="sm" style={{ color: "#e11d48" }}>
+                            <Text style={{ color: "#e11d48" }}>
                               {addressSearchError}
                             </Text>
                           ) : null}
@@ -791,16 +808,26 @@ export default function ExperienceForm({
                             <div className="addrlink-result-list">
                               {addressResults.map((item) => (
                                 <button
-                                  key={`${item.zipNo}-${item.roadAddr}-${item.bdMgtSn ?? ""}`}
+                                  key={`${item.zipNo}-${item.roadAddr}-${
+                                    item.bdMgtSn ?? ""
+                                  }`}
                                   type="button"
                                   className="addrlink-result-item"
                                   onClick={() => handleSelectAddress(item)}
                                 >
-                                  <span className="addrlink-zip">[{item.zipNo}]</span>
-                                  <span className="addrlink-road">{item.roadAddr}</span>
-                                  <span className="addrlink-jibun">{item.jibunAddr}</span>
+                                  <span className="addrlink-zip">
+                                    [{item.zipNo}]
+                                  </span>
+                                  <span className="addrlink-road">
+                                    {item.roadAddr}
+                                  </span>
+                                  <span className="addrlink-jibun">
+                                    {item.jibunAddr}
+                                  </span>
                                   {item.bdNm ? (
-                                    <span className="addrlink-extra">{item.bdNm}</span>
+                                    <span className="addrlink-extra">
+                                      {item.bdNm}
+                                    </span>
                                   ) : null}
                                 </button>
                               ))}
@@ -810,10 +837,7 @@ export default function ExperienceForm({
                         <Field.Root name="location">
                           <Textarea
                             ref={addressRef}
-                            defaultValue={formData.address}
-                            onBlur={(event) =>
-                              setFormData({ ...formData, address: event.target.value })
-                            }
+                            defaultValue="체험 장소를 입력하세요"
                             placeholder="체험 장소를 입력하세요"
                             className="large-input-placeholder"
                             size="xl"
@@ -852,7 +876,9 @@ export default function ExperienceForm({
                           size="xl"
                           onClick={() => {
                             const addressValue =
-                              addressRef.current?.value ?? formData.address ?? "";
+                              addressRef.current?.value ??
+                              formData.address ??
+                              "";
                             const address = addressValue.trim();
                             setFormData({ ...formData, address });
                             history.push("duration", { address });

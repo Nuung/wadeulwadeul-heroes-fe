@@ -26,8 +26,10 @@ const SAMPLE_SLIDES = [
 
 import MobileBottomNav from "@/shared/ui/BottomNav";
 import { Box, Tabs } from "@vapor-ui/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CategoryTab } from "./CategoryTab";
+import { NavMenu } from "./NavMenu";
 
 export function UserMain() {
   const [currPath, setCurrPath] = useState("user");
@@ -37,10 +39,25 @@ export function UserMain() {
     navigation(`/${value}`);
   };
 
+  useEffect(() => {
+    const handlePopState = () => {
+      const path = window.location.pathname.substring(1);
+      setCurrPath(path || "user");
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, []);
+
   return (
     <>
-      <div className="w-full max-w-6xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-6">사용자 메인</h1>
+      <NavMenu />
+      <div className="w-full mt-3">
+        <CategoryTab />
+      </div>
+      <div className="w-full max-w-6xl mx-auto py-4">
         <ImageSlider
           slides={SAMPLE_SLIDES}
           spaceBetween={12}

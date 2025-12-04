@@ -2,9 +2,10 @@ import { Outlet } from "react-router-dom";
 
 export default function App() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
-      {/* 이 Outlet 부분에 Home 또는 About 컴포넌트가 렌더링됩니다. */}
-      <Outlet />
-    </main>
+    <div className="min-h-screen flex flex-col items-center">
+      <main className="flex-grow flex flex-col items-center justify-start py-6 w-full max-w-6xl">
+        <Outlet />
+      </main>
+    </div>
   );
 }

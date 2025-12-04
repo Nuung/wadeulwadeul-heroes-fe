@@ -1,5 +1,5 @@
 import { HomeIcon, TestOutlineIcon, UserOutlineIcon } from "@vapor-ui/icons";
-import { Button } from "@vapor-ui/core";
+import { Button, Text } from "@vapor-ui/core";
 
 interface MobileBottomNavProps {
   value: string;
@@ -13,8 +13,8 @@ export default function MobileBottomNav({
 }: MobileBottomNavProps) {
   const items = [
     { key: "user", label: "홈", icon: <HomeIcon /> },
-    { key: "content", label: "예약현황", icon: <TestOutlineIcon /> },
-    { key: "mypage", label: "마이", icon: <UserOutlineIcon /> },
+    { key: "#", label: "예약현황", icon: <TestOutlineIcon /> },
+    { key: "#", label: "마이", icon: <UserOutlineIcon /> },
   ];
 
   return (
@@ -28,13 +28,19 @@ export default function MobileBottomNav({
           onClick={() => onChange(item.key)}
           className="flex flex-col items-center"
           colorPalette="contrast"
+          backgroundColor="transparent"
           style={{
             color: value === item.key ? "#EF6F25" : "white",
             transition: "color 0.2s",
           }}
         >
           <div className="text-lg">{item.icon}</div>
-          <span>{item.label}</span>
+          <Text
+            color={value === item.key ? "color-orange-400" : "white"}
+            typography="subtitle2"
+          >
+            {item.label}
+          </Text>
         </Button>
       ))}
     </nav>

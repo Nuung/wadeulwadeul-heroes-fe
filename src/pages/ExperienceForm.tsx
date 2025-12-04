@@ -244,6 +244,7 @@ export default function ExperienceForm({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
     // Form submission is now handled in the recommendation step
   };
 

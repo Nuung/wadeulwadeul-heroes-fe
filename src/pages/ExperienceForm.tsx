@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Field, TextInput, Button, VStack, HStack, Text, Box, Sheet } from '@vapor-ui/core';
 import { useFunnel } from '@use-funnel/react-router-dom';
@@ -88,6 +88,11 @@ export default function ExperienceForm() {
     },
   });
 
+  // useRef를 사용하여 occupation, address, name 필드의 값을 관리
+  const occupationRef = useRef<HTMLInputElement>(null);
+  const addressRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+
   const [formData, setFormData] = useState({
     category: '',
     experienceYears: 0,
@@ -99,16 +104,12 @@ export default function ExperienceForm() {
     price: 0,
   });
 
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log('최종 제출 데이터:', formData);
     alert('체험이 등록되었습니다!');
   };
-
-  const handleInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log('e', e)
-      setFormData({ ...formData, 'occupation': e.target.value });
-  }, [formData]);
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
@@ -137,7 +138,7 @@ export default function ExperienceForm() {
               <funnel.Render
                 category={({ history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">어떤 종류의 체험을 제공하시나요?</Text>
+                    <Text typography="heading3">어떤 종류의 체험을 제공하시나요?</Text>
                     <Field.Root name="category">
                       <CategoryCard
                         name="category"
@@ -149,7 +150,6 @@ export default function ExperienceForm() {
                     <Button
                       type="button"
                       onClick={() => history.push('experience', { category: formData.category })}
-                      disabled={!formData.category}
                     >
                       다음
                     </Button>
@@ -157,7 +157,7 @@ export default function ExperienceForm() {
                 )}
                 experience={({ context, history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">
+                    <Text typography="heading3">
                       {CATEGORY_OPTIONS.find((opt) => opt.value === context.category)?.label} 분야에서 몇 년 동안
                       일하셨나요?
                     </Text>
@@ -187,13 +187,13 @@ export default function ExperienceForm() {
                 )}
                 occupation={({ history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">어떤 일을 하시나요?</Text>
+                    <Text typography="heading3">어떤 일을 하시나요?</Text>
                     <Field.Root name="occupation">
                       <Field.Label>직업</Field.Label>
                       <TextInput
+                        ref={occupationRef}
                         placeholder="돌담 쌓기"
-                        value={formData.occupation}
-                        onChange={handleInput}
+                        defaultValue={formData.occupation}
                       />
                     </Field.Root>
                     <HStack gap="$150">
@@ -202,8 +202,11 @@ export default function ExperienceForm() {
                       </Button>
                       <Button
                         type="button"
-                        onClick={() => history.push('expertise', { occupation: formData.occupation })}
-                        disabled={!formData.occupation.trim()}
+                        onClick={() => {
+                          const occupation = occupationRef.current?.value || '';
+                          setFormData({ ...formData, occupation });
+                          history.push('expertise', { occupation });
+                        }}
                       >
                         다음
                       </Button>
@@ -212,7 +215,7 @@ export default function ExperienceForm() {
                 )}
                 expertise={({ history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">전문성을 강조하는 방법</Text>
+                    <Text typography="heading3">전문성을 강조하는 방법</Text>
                     <Box padding="$300" backgroundColor="$canvas-100" borderRadius="$200">
                       <Text typography="body1" foreground="hint-100">
                         이 섹션은 추후 확장 예정입니다.
@@ -230,12 +233,12 @@ export default function ExperienceForm() {
                 )}
                 location={({ history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">신청자와 만나는 장소가 어디인가요?</Text>
+                    <Text typography="heading3">신청자와 만나는 장소가 어디인가요?</Text>
                     <Field.Root name="location">
                       <Field.Label>체험 장소</Field.Label>
                       <TextInput
-                        value={formData.address}
-                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                        ref={addressRef}
+                        defaultValue={formData.address}
                         placeholder="체험 장소를 입력하세요"
                       />
                     </Field.Root>
@@ -245,8 +248,11 @@ export default function ExperienceForm() {
                       </Button>
                       <Button
                         type="button"
-                        onClick={() => history.push('name', { address: formData.address })}
-                        disabled={!formData.address.trim()}
+                        onClick={() => {
+                          const address = addressRef.current?.value || '';
+                          setFormData({ ...formData, address });
+                          history.push('name', { address });
+                        }}
                       >
                         다음
                       </Button>
@@ -255,13 +261,13 @@ export default function ExperienceForm() {
                 )}
                 name={({ history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">체험 이름 작성하기</Text>
+                    <Text typography="heading3">체험 이름 작성하기</Text>
                     <Field.Root name="experienceName">
                       <Field.Label>체험 이름</Field.Label>
                       <TextInput
+                        ref={nameRef}
                         placeholder="제주도 장인과 함께 돌담 쌓아보기"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        defaultValue={formData.name}
                       />
                     </Field.Root>
                     <HStack gap="$150">
@@ -270,8 +276,11 @@ export default function ExperienceForm() {
                       </Button>
                       <Button
                         type="button"
-                        onClick={() => history.push('duration', { name: formData.name })}
-                        disabled={!formData.name.trim()}
+                        onClick={() => {
+                          const name = nameRef.current?.value || '';
+                          setFormData({ ...formData, name });
+                          history.push('duration', { name });
+                        }}
                       >
                         다음
                       </Button>
@@ -280,7 +289,7 @@ export default function ExperienceForm() {
                 )}
                 duration={({ history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">소요 시간 설정</Text>
+                    <Text typography="heading3">소요 시간 설정</Text>
                     <Field.Root name="duration">
                       <Field.Label>소요 시간</Field.Label>
                       <HStack gap="$100" alignItems="center">
@@ -309,7 +318,7 @@ export default function ExperienceForm() {
                 )}
                 capacity={({ history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">최대 인원 추가</Text>
+                    <Text typography="heading3">최대 인원 추가</Text>
                     <Field.Root name="maxCapacity">
                       <Field.Label>최대 참여 인원</Field.Label>
                       <NumberStepper
@@ -335,7 +344,7 @@ export default function ExperienceForm() {
                 )}
                 price={({ history }) => (
                   <VStack gap="$300">
-                    <Text typography="heading1">게스트 1인당 요금</Text>
+                    <Text typography="heading3">게스트 1인당 요금</Text>
                     <Field.Root name="price">
                       <Field.Label>가격 (원)</Field.Label>
                       <HStack gap="$100" alignItems="center">

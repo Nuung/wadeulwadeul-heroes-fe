@@ -1,4 +1,4 @@
-import { Radio, RadioGroup } from '@vapor-ui/core';
+import { Radio, RadioGroup, Field, VStack, HStack } from '@vapor-ui/core';
 import type { ReactNode } from 'react';
 
 export interface RadioOption {
@@ -34,7 +34,8 @@ export function FormRadioGroup({
   className = '',
   direction = 'vertical',
 }: FormRadioGroupProps) {
-  const containerClassName = direction === 'vertical' ? 'v-space-y-2' : 'v-flex v-gap-4';
+  const Stack = direction === 'vertical' ? VStack : HStack;
+  const gap = direction === 'vertical' ? 2 : 4;
 
   return (
     <RadioGroup.Root
@@ -52,7 +53,7 @@ export function FormRadioGroup({
       size={size}
       className={className}
     >
-      <div className={containerClassName}>
+      <Stack gap={gap}>
         {options.map((option) => (
           <RadioItem
             key={option.value}
@@ -62,7 +63,7 @@ export function FormRadioGroup({
             size={size}
           />
         ))}
-      </div>
+      </Stack>
     </RadioGroup.Root>
   );
 }
@@ -76,9 +77,9 @@ interface RadioItemProps {
 
 function RadioItem({ value, label, disabled, size = 'md' }: RadioItemProps) {
   return (
-    <div className="v-flex v-items-center v-gap-2">
+    <HStack gap={2} alignItems="center">
       <Radio.Root value={value} disabled={disabled} size={size} />
-      <label className="v-text-sm v-cursor-pointer">{label}</label>
-    </div>
+      <Field.Label>{label}</Field.Label>
+    </HStack>
   );
 }

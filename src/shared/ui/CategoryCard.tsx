@@ -45,13 +45,16 @@ export function CategoryCard({
               justifyContent: "center",
             }}
           >
-            <VStack gap="$200" alignItems="center" padding="$300">
+            <VStack gap="$200" alignItems="center" padding="$200">
               {option.icon && (
-                <div className="v-w-20 v-h-20 v-flex v-items-center v-justify-center">
+                <div className="mt-4 v-w-20 v-h-20 v-flex v-items-center v-justify-center">
                   {option.icon}
                 </div>
               )}
-              <Text typography="body1" className="v-text-center v-font-medium">
+              <Text
+                typography="heading4"
+                className="v-text-center v-font-medium mt-0.5"
+              >
                 {option.label}
               </Text>
             </VStack>

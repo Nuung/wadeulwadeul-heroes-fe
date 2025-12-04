@@ -22,7 +22,7 @@ const SAMPLE_SLIDES = [
     title: "바다와 함께",
     description: "푸른 바다가 주는 평화로운 시간",
   },
-] as const;
+];
 
 import MobileBottomNav from "@/shared/ui/BottomNav";
 import { Box, Tabs } from "@vapor-ui/core";

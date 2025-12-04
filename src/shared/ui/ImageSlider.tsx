@@ -1,10 +1,10 @@
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
-import type { ReactNode } from 'react';
-import { useState } from 'react';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
+import type { ReactNode } from "react";
+import { useState } from "react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 interface SlideItem {
   id: string;
@@ -24,7 +24,7 @@ interface ImageSliderProps {
   /** Enable hover flip to reveal overlay text on top of the image */
   hoverFlip?: boolean;
   /** Flip interaction: hover (desktop) or tap (mobile) */
-  flipMode?: 'hover' | 'tap';
+  flipMode?: "hover" | "tap";
   /** Custom back-face renderer (default shows title/description) */
   renderBack?: (slide: SlideItem) => ReactNode;
 }
@@ -38,7 +38,7 @@ export function ImageSlider({
   centeredSlides = false,
   loop = false,
   hoverFlip = false,
-  flipMode = 'hover',
+  flipMode = "hover",
   renderBack,
 }: ImageSliderProps) {
   const [activeFlipId, setActiveFlipId] = useState<string | null>(null);
@@ -57,24 +57,26 @@ export function ImageSlider({
       {slides.map((slide) => (
         <SwiperSlide key={slide.id}>
           <div
-            className={`group relative w-full h-[400px] overflow-hidden rounded-2xl shadow-lg ${hoverFlip ? 'cursor-pointer perspective-[1200px]' : ''}`}
+            className={`group relative w-full h-[400px] overflow-hidden rounded-2xl shadow-lg ${
+              hoverFlip ? "cursor-pointer perspective-[1200px]" : ""
+            }`}
             onClick={() => {
-              if (!hoverFlip || flipMode !== 'tap') return;
+              if (!hoverFlip || flipMode !== "tap") return;
               setActiveFlipId((prev) => (prev === slide.id ? null : slide.id));
             }}
-            role={hoverFlip && flipMode === 'tap' ? 'button' : undefined}
-            tabIndex={hoverFlip && flipMode === 'tap' ? 0 : undefined}
+            role={hoverFlip && flipMode === "tap" ? "button" : undefined}
+            tabIndex={hoverFlip && flipMode === "tap" ? 0 : undefined}
           >
             {hoverFlip ? (
               <div
                 className={[
-                  '[transform-style:preserve-3d] h-full w-full transition-transform duration-500',
-                  flipMode === 'hover'
-                    ? 'group-hover:[transform:rotateY(180deg)]'
+                  "[transform-style:preserve-3d] h-full w-full transition-transform duration-500",
+                  flipMode === "hover"
+                    ? "group-hover:[transform:rotateY(180deg)]"
                     : activeFlipId === slide.id
-                      ? '[transform:rotateY(180deg)]'
-                      : '',
-                ].join(' ')}
+                    ? "[transform:rotateY(180deg)]"
+                    : "",
+                ].join(" ")}
               >
                 <div className="absolute inset-0 backface-hidden">
                   <img

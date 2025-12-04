@@ -1,4 +1,4 @@
-import { useState, useRef, useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Form,
@@ -20,12 +20,18 @@ import PriceSelector from "../shared/ui/select/PriceSelector";
 import { ClassTemplate } from "../shared/ui/ClassTemplate";
 import { Skeleton, SkeletonGroup } from "../shared/ui/Skeleton";
 import {
+  searchJusoAddress,
+  sanitizeJusoKeyword,
+  type JusoAddress,
+} from "@/shared/api/juso";
+import {
   useSuggestMaterialsMutation,
   useSuggestStepsMutation,
   useGenerateExperiencePlanMutation,
 } from "../shared/api/queries/experience-plan.hooks";
 import { useCreateClassMutation } from "../shared/api/queries/class.hooks";
 import type { ClassTemplateData } from "../shared/api/queries/class.types";
+import "@/shared/ui/addrlinkSample.css";
 
 // 10단계 Funnel 타입 정의
 type ExperienceFormSteps = {
@@ -214,6 +220,12 @@ export default function ExperienceForm({
     price: 0,
     template: null,
   });
+  const [addressKeyword, setAddressKeyword] = useState("");
+  const [addressResults, setAddressResults] = useState<JusoAddress[]>([]);
+  const [addressSearchError, setAddressSearchError] = useState<string | null>(
+    null
+  );
+  const [isAddressSearching, setIsAddressSearching] = useState(false);
 
   const occupationPlaceholder = useMemo(
     () => getOccupationTitle(formData.category),
@@ -233,6 +245,49 @@ export default function ExperienceForm({
 
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
+  };
+
+  const handleAddressSearch = async () => {
+    const sanitizedKeyword = sanitizeJusoKeyword(addressKeyword);
+    if (!sanitizedKeyword) {
+      setAddressSearchError("검색어를 입력해주세요.");
+      setAddressResults([]);
+      return;
+    }
+
+    setIsAddressSearching(true);
+    setAddressSearchError(null);
+    try {
+      const results = await searchJusoAddress(sanitizedKeyword);
+      setAddressResults(results);
+      if (!results.length) {
+        setAddressSearchError("검색 결과가 없습니다. 다른 키워드를 입력해주세요.");
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "주소 검색에 실패했습니다. 잠시 후 다시 시도해주세요.";
+      setAddressSearchError(message);
+      setAddressResults([]);
+    } finally {
+      setIsAddressSearching(false);
+    }
+  };
+
+  const handleSelectAddress = (item: JusoAddress) => {
+    const composed = [item.zipNo ? `[${item.zipNo}]` : "", item.roadAddr || item.jibunAddr]
+      .filter(Boolean)
+      .join(" ");
+    const nextAddress = composed || item.roadAddr || item.jibunAddr || "";
+
+    setFormData((prev) => ({ ...prev, address: nextAddress }));
+    setAddressKeyword(item.roadAddr || "");
+    setAddressResults([]);
+    if (addressRef.current) {
+      addressRef.current.value = nextAddress;
+      addressRef.current.focus();
+    }
   };
 
   return (
@@ -702,10 +757,63 @@ export default function ExperienceForm({
                         <Text typography="heading3">
                           신청자와 만나는 장소가 어디인가요?
                         </Text>
+                        <Box className="addrlink-search-box">
+                          <div className="addrlink-search-form">
+                            <TextInput
+                              placeholder="도로명 / 건물명 / 지번으로 검색"
+                              value={addressKeyword}
+                              onChange={(event) => setAddressKeyword(event.target.value)}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                  event.preventDefault();
+                                  void handleAddressSearch();
+                                }
+                              }}
+                              className="addrlink-search-input"
+                              size="lg"
+                            />
+                            <Button
+                              type="button"
+                              variant="fill"
+                              size="lg"
+                              onClick={() => void handleAddressSearch()}
+                              disabled={isAddressSearching}
+                            >
+                              {isAddressSearching ? "검색 중..." : "주소 검색"}
+                            </Button>
+                          </div>
+                          {addressSearchError ? (
+                            <Text size="sm" style={{ color: "#e11d48" }}>
+                              {addressSearchError}
+                            </Text>
+                          ) : null}
+                          {addressResults.length > 0 ? (
+                            <div className="addrlink-result-list">
+                              {addressResults.map((item) => (
+                                <button
+                                  key={`${item.zipNo}-${item.roadAddr}-${item.bdMgtSn ?? ""}`}
+                                  type="button"
+                                  className="addrlink-result-item"
+                                  onClick={() => handleSelectAddress(item)}
+                                >
+                                  <span className="addrlink-zip">[{item.zipNo}]</span>
+                                  <span className="addrlink-road">{item.roadAddr}</span>
+                                  <span className="addrlink-jibun">{item.jibunAddr}</span>
+                                  {item.bdNm ? (
+                                    <span className="addrlink-extra">{item.bdNm}</span>
+                                  ) : null}
+                                </button>
+                              ))}
+                            </div>
+                          ) : null}
+                        </Box>
                         <Field.Root name="location">
                           <Textarea
                             ref={addressRef}
                             defaultValue={formData.address}
+                            onBlur={(event) =>
+                              setFormData({ ...formData, address: event.target.value })
+                            }
                             placeholder="체험 장소를 입력하세요"
                             className="large-input-placeholder"
                             size="xl"
@@ -743,7 +851,9 @@ export default function ExperienceForm({
                           width="100%"
                           size="xl"
                           onClick={() => {
-                            const address = addressRef.current?.value || "";
+                            const addressValue =
+                              addressRef.current?.value ?? formData.address ?? "";
+                            const address = addressValue.trim();
                             setFormData({ ...formData, address });
                             history.push("duration", { address });
                           }}

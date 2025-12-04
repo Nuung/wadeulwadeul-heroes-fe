@@ -1,6 +1,12 @@
 import axios, { type AxiosRequestConfig } from "axios";
 
-export const BASE_URL = "/wadeul";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ??
+  (import.meta.env.MODE === "localdev"
+    ? "/wadeul" // 로컬 개발은 Vite 프록시 사용
+    : "https://goormthon-5.goorm.training"); // 프로덕션/기타는 백엔드 절대 경로 사용
+
+export const BASE_URL = API_BASE_URL;
 export const baseClient = axios.create({
   baseURL: BASE_URL,
 });

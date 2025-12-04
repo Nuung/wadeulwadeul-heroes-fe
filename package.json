@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.11",
     "@use-funnel/react-router-dom": "^0.0.15",
     "@vapor-ui/core": "^1.0.0-beta.7",
     "@vapor-ui/icons": "^1.0.0-beta.5",

@@ -113,27 +113,27 @@ type ExperienceFormSteps = {
 
 const CATEGORY_OPTIONS: CategoryOption[] = [
   {
-    value: "stone",
+    value: "돌담",
     label: "돌담",
     icon: <span style={{ fontSize: "48px" }}>🪨</span>,
   },
   {
-    value: "tangerine",
+    value: "감귤",
     label: "감귤",
     icon: <span style={{ fontSize: "48px" }}>🍊</span>,
   },
   {
-    value: "haenyeo",
+    value: "해녀",
     label: "해녀",
     icon: <span style={{ fontSize: "48px" }}>🤿</span>,
   },
   {
-    value: "cooking",
+    value: "요리",
     label: "요리",
     icon: <span style={{ fontSize: "48px" }}>👨‍🍳</span>,
   },
   {
-    value: "woodworking",
+    value: "목공",
     label: "목공",
     icon: <span style={{ fontSize: "48px" }}>🪚</span>,
   },
@@ -142,20 +142,20 @@ const CATEGORY_OPTIONS: CategoryOption[] = [
 type CategoryValue = (typeof CATEGORY_OPTIONS)[number]["value"];
 
 const CATEGORY_OCCUPATION_TITLES: Record<CategoryValue, string[]> = {
-  stone: ["제주 돌담 복원 장인", "전통 돌쌓기 석공", "농가 돌담 설계 전문가"],
-  tangerine: [
+  돌담: ["제주 돌담 복원 장인", "전통 돌쌓기 석공", "농가 돌담 설계 전문가"],
+  감귤: [
     "감귤 대농장 주인",
     "소소한 감귤 농장 운영자",
     "감귤 선과장 관리 매니저",
     "감귤 브랜드 디렉터",
   ],
-  haenyeo: ["베테랑 해녀 선배", "해녀 물질 안전 강사", "초보 해녀 멘토"],
-  cooking: [
+  해녀: ["베테랑 해녀 선배", "해녀 물질 안전 강사", "초보 해녀 멘토"],
+  요리: [
     "제주 향토요리 셰프",
     "팜투테이블 쿠킹클래스 강사",
     "로컬 제철요리 연구 셰프",
   ],
-  woodworking: [
+  목공: [
     "수제 가구 목공방 마스터",
     "전통 목재 가공 장인",
     "생활 목공 DIY 강사",

@@ -35,7 +35,7 @@ export default function Main() {
       <VStack className="items-center gap-2 mt-20">
         <NavMenu width="200" isSplash />
         <Text className="text-surface-500 text-sm mt-2">
-          한 수 배워가는 공간, 삼춘한수
+          오늘도 삼춘에게 한 수 배워수다
         </Text>
       </VStack>
 

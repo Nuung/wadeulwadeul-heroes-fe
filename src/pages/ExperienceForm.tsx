@@ -420,7 +420,7 @@ export default function ExperienceForm({
                     >
                       <VStack gap="$300">
                         <Text typography="heading3">
-                          어떤 종류의 체험을 제공하시나요?
+                          어떤 종류의 클래스를 제공하시나요?
                         </Text>
 
                         <CategoryCard
@@ -471,7 +471,7 @@ export default function ExperienceForm({
                               (opt) => opt.value === context.category
                             )?.label
                           }
-                          분야에서 몇 년 동안 일하셨나요?
+                          해당 분야에서 몇 년 동안 일하셨나요?
                         </Text>
 
                         <Box

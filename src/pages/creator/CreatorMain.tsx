@@ -16,7 +16,7 @@ export function CreatorMain() {
       <NavMenu width="100" isSplash />
       <VStack justifyContent="space-between" className="h-[calc(100vh-80px)]">
         <VStack>
-          {isLoading && !isSuccess && classList && classList.length < 1 ? (
+          {isLoading || !isSuccess || (classList && classList.length < 1) ? (
             <Onboarding />
           ) : (
             <CreatorClassList />
